@@ -1,38 +1,43 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            This is Place for rules:
-            <ul>
-                <li>RUle 1</li>
-                <li>Rule 2</li>
-                <li>Rule 3</li>
-                <li>Rule 4</li>
-            </ul>
+            <div class="panel panel-default">
+                <div class="panel-heading">Rules</div>
+                <div class="panel-body">
+                    <p>
+                        This is Place for rules:
+                    </p>
+                    <p>Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
+                    <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec ullamcorper nulla non metus auctor fringilla.</p>
+                    <p>Maecenas sed diam eget risus varius blandit sit amet non magna. Donec id elit non mi porta gravida at eget metus. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
+                </div>
+            </div>
         </div>
-
         <div class="col-md-6">
-            <form class="form-horizontal">
-                <div class="form-group">
-                    <label for="playerName" class="col-sm-4 control-label">Player Name</label>
-                    <div class="col-sm-8">
-                        <input type="text" [(ngModel)]="playerName" class="form-control" id="playerName" placeholder="Player Name">
+            <div class="panel panel-default">
+                <div class="panel-heading">Add Players</div>
+                    <div class="panel-body">
+                        <div class="col-lg-8">
+                            <form class="form">
+                                <div class="form-group">
+                                    <label for="playerName">Player Name</label>
+                                    <input type="text" [(ngModel)]="playerName" class="form-control" id="playerName" placeholder="Player Name">
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-default" (click)="addPlayer()">Add Player</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg-4">
+                            <ul>
+                                <li *ngFor="let player of gameEngineService.players">
+                                    {{player.username}}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <div class="col-sm-4"> </div>
-                    <div class="col-sm-8">
-                        <button class="btn btn-default" (click)="addPlayer()">Add Player</button>
-                    </div>
-                </div>
-            </form>
-
-            <ul>
-                <li *ngFor="let player of gameEngineService.players">
-                    {{player.username}}
-                </li>
-            </ul>
-
-        </div>
+            </div>
     </div>
 </div>
