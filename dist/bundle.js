@@ -42065,7 +42065,7 @@
 	var router_1 = __webpack_require__(280);
 	var home_component_1 = __webpack_require__(303);
 	var board_component_1 = __webpack_require__(304);
-	var navbar_component_1 = __webpack_require__(305);
+	var navbar_component_1 = __webpack_require__(306);
 	var AppComponent = (function () {
 	    function AppComponent() {
 	    }
@@ -42098,6 +42098,9 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
 	var core_1 = __webpack_require__(7);
 	var HomeComponent = (function () {
 	    function HomeComponent() {
@@ -42105,13 +42108,14 @@
 	    HomeComponent = __decorate([
 	        core_1.Component({
 	            selector: 'home',
-	            template: "\n        This is home page\n    "
-	        })
+	            template: "\n        <div class=\"container col-lg-11\">\n            <div class=\"row\">\n                <div>This is Snake and ladder game:</div>\n                <div class=\"col-md-5\">\n                    This is Place for rules:\n                    <ul>\n                        <li>RUle 1</li>\n                        <li>Rule 2</li>\n                        <li>Rule 3</li>\n                        <li>Rule 4</li>\n                    </ul>\n                </div>\n                <div class=\"col-md-3\">\n                    this section is for input name\n                    <form class=\"form\">\n                        <input type=\"text\" class=\"form-control\"  placeholder=\"name\">\n                        <input type=\"text\" class=\"form-control\" placeholder=\"name\">\n                    </form>\n                </div>\n            </div>\n        </div>\n            "
+	        }), 
+	        __metadata('design:paramtypes', [])
 	    ], HomeComponent);
 	    return HomeComponent;
 	}());
 	exports.HomeComponent = HomeComponent;
-	//# sourceMappingURL=home.component.js.map
+
 
 /***/ },
 /* 304 */
@@ -42124,20 +42128,26 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
 	var core_1 = __webpack_require__(7);
+	var user_interaction_panel_1 = __webpack_require__(305);
 	var BoardComponent = (function () {
 	    function BoardComponent() {
 	    }
 	    BoardComponent = __decorate([
 	        core_1.Component({
 	            selector: 'board',
-	            template: "\n        This is board page\n    "
-	        })
+	            directives: [user_interaction_panel_1.UserInteractionPanel],
+	            template: "\n    <div class=\"row\">\n        <div class=\"col-lg-9\">\n            <h4>This is board page</h4>\n        </div>\n        <user-interaction></user-interaction>\n     </div>\n    "
+	        }), 
+	        __metadata('design:paramtypes', [])
 	    ], BoardComponent);
 	    return BoardComponent;
 	}());
 	exports.BoardComponent = BoardComponent;
-	//# sourceMappingURL=board.component.js.map
+
 
 /***/ },
 /* 305 */
@@ -42150,6 +42160,39 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var UserInteractionPanel = (function () {
+	    function UserInteractionPanel() {
+	    }
+	    UserInteractionPanel = __decorate([
+	        core_1.Component({
+	            selector: 'user-interaction',
+	            template: "\n    <div class=\"col-lg-3\">\n        <div class=\"row\">\n            <div class=\"col-lg-12\">\n                <h4>Manish kapoor</h4>        \n            </div>\n            <div class=\"col-lg-12\">\n                <img src=\"../../assets/images/rolling-dice.png\" />        \n            </div>\n            <div class=\"col-lg-12\">\n                <button>Roll</button>        \n            </div>\n            <div class=\"col-lg-12\">\n                1        \n            </div>\n            \n        </div>\n    </div>\n    "
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], UserInteractionPanel);
+	    return UserInteractionPanel;
+	}());
+	exports.UserInteractionPanel = UserInteractionPanel;
+
+
+/***/ },
+/* 306 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
 	var core_1 = __webpack_require__(7);
 	var router_1 = __webpack_require__(280);
 	var NavBarComponent = (function () {
@@ -42161,12 +42204,13 @@
 	            selector: 'nav-bar',
 	            directives: [router_1.ROUTER_DIRECTIVES],
 	            template: "\n        <nav class=\"navbar navbar-default\">\n    <div class=\"container-fluid\">\n        <!-- Brand and toggle get grouped for better mobile display -->\n        <div class=\"navbar-header\">\n            <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                <ul class=\"nav navbar-nav\">\n                    <li [ngClass]=\"{'active': (menu == 'home')}\" (click)=\"menu = 'home'\"><a [routerLink]=\"['/home']\">Home</a></li>\n                    <li [ngClass]=\"{'active': (menu == 'board')}\" (click)=\"menu = 'board'\"><a [routerLink]=\"['/board']\">Board</a></li>\n                </ul>\n            </div>\n        </div>\n    </div>\n</nav>\n    "
-	        })
+	        }), 
+	        __metadata('design:paramtypes', [])
 	    ], NavBarComponent);
 	    return NavBarComponent;
 	}());
 	exports.NavBarComponent = NavBarComponent;
-	//# sourceMappingURL=navbar.component.js.map
+
 
 /***/ }
 /******/ ]);
