@@ -23,7 +23,21 @@ export class GameEngineService{
         new Advancer("ladder",72, 93),
         new Advancer("ladder",80, 100)
     ]
-
     
+    getSnakeAdvancers(){
+        return this.advancersList.filter(this.isSnakeAdvancer)
+    }
 
+    getLadderAdvancers(){
+        return this.advancersList.filter(this.isLadderAdvancer)
+    }
+
+    isSnakeAdvancer = (advancer: Advancer):boolean  => {
+        return advancer.type == "snake"
+    }
+
+    isLadderAdvancer = (advancer: Advancer):boolean  => {
+        return advancer.type == "ladder"
+    }
+    
 }
