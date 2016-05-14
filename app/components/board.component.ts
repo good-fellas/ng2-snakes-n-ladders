@@ -1,33 +1,25 @@
 import {Component} from "@angular/core";
-import {UserInteractionPanel} from "./user-interaction-panel";
-import {LadderAdvancerList} from "./ladder-advancer-list";
-import {SnakeAdvancerList} from "./snake-advancers-list";
+import {Cell} from "../model/cell"
 
 @Component({
     selector: 'board',
-    directives: [UserInteractionPanel, LadderAdvancerList, SnakeAdvancerList],
+    directives: [],
     template: `
- <div class="container">
-        <div class="row"> 
-            <div class="col-md-12 text-center"> <h1>Snake & Ladder</h1> </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-1">
-                <snake-advancers-list></snake-advancers-list>
-            </div>
-            <div class="col-md-1">
-                <ladder-advancers-list></ladder-advancers-list>
-            </div>
+     <div>
+        <div *ngFor="let cell of cells; let i = index">
             
-            <div class="col-md-7"></div>
-            <div class="col-md-3">
-                <user-interaction-panel></user-interaction-panel>
-            </div>
-        </div>
- </div>
+         #{{cell.position}}
+        </div>       
+     </div>
     `
 })
 export class BoardComponent {
 
+    cells = [];
+
+    constructor(){
+        for (var index = 0; index < 100; index++) {
+            this.cells.push(new Cell(100 - index));
+        }
+    }
 }
