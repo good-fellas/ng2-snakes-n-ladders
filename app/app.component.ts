@@ -1,20 +1,22 @@
 import {Component} from '@angular/core';
-import { ROUTER_DIRECTIVES, Routes } from '@angular/router';
+import {ROUTER_DIRECTIVES, Routes} from '@angular/router';
 import {HomeComponent} from "./home/home.component";
+import {BoardComponent} from "./board/board.component";
+import {NavBarComponent} from "./home/navbar.component";
 
 @Component({
     selector: 'my-app',
+    directives: [ROUTER_DIRECTIVES, NavBarComponent],
     template: `
     <h1>Component Router</h1>
-    <nav>
-      <a [routerLink]="['/home']">Home</a>
-    </nav>
+    <nav-bar></nav-bar>
     <router-outlet></router-outlet>
-  `,
-    directives: [ROUTER_DIRECTIVES]
+  `
 })
 @Routes([
     {path: '/home', component: HomeComponent},
-    {path: '/',        component: HomeComponent}
+    {path: '/board', component: BoardComponent},
+    {path: '/', component: HomeComponent}
 ])
-export class AppComponent { }
+export class AppComponent {
+}

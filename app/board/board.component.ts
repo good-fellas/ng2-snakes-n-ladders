@@ -2,10 +2,10 @@ import {Component} from "@angular/core";
 
 
 @Component({
-    selector: 'home',
+    selector: 'board',
     moduleId: module.id,
-    templateUrl: 'home.html'
+    templateUrl: 'board.html'
 })
-export class HomeComponent {
+export class BoardComponent {
 
 }
