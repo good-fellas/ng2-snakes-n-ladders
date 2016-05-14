@@ -11,22 +11,7 @@ import {GameEngineService} from "./services/gaming-engine";
     selector: 'my-app',
     directives: [ROUTER_DIRECTIVES, NavBarComponent, SnakeAdvancerList, LadderAdvancerList],
     providers: [GameEngineService],
-    template: `
-    <div class="container">
-        <div class="row"> 
-            <div class="col-md-12"> <h1>Snake & Ladder</h1> </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-2">
-            <snake-advancers-list></snake-advancers-list>
-            </div>
-            <div class="col-md-2">
-            <ladder-advancers-list></ladder-advancers-list>
-</div>
-        </div>
-    </div>
-    
+    template: ` 
     <nav-bar></nav-bar>
     <router-outlet></router-outlet>
   `

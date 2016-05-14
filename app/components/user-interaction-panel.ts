@@ -3,7 +3,6 @@ import {Component} from '@angular/core'
 @Component({
     selector: 'user-interaction-panel',
     template: `
-    <div class="col-lg-3">
         <div class="row">
             <div class="col-lg-12">
                 <h4>Manish kapoor</h4>        
@@ -18,7 +17,6 @@ import {Component} from '@angular/core'
                 {{randomNumber}}        
             </div>
         </div>
-    </div>
     `
 })
 
