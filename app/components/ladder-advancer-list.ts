@@ -11,7 +11,7 @@ import {GameEngineService} from "../services/gaming-engine";
             <th colspan="2" class="text-center"> Ladder Advancers </th>
         </thead>
          <tbody>
-             <tr *ngFor="#ladderAdvancer of gameEngineService.getLadderAdvancers()">
+             <tr *ngFor="let ladderAdvancer of gameEngineService.getLadderAdvancers()">
                     <td>{{ladderAdvancer.initialCellIndex}}</td>
                     <td>{{ladderAdvancer.finalCellIndex}}</td>
              </tr>

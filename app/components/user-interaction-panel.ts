@@ -1,4 +1,5 @@
 import {Component} from '@angular/core'
+import {GameEngineService} from "../services/gaming-engine";
 
 @Component({
     selector: 'user-interaction-panel',
@@ -16,6 +17,12 @@ import {Component} from '@angular/core'
             <div class="col-lg-12">
                 {{randomNumber}}        
             </div>
+            
+            <div class="col-lg-12">
+                
+                Current Player : {{gameEngineService.currentPlayer.username}}        
+            </div>
+            
         </div>
     `
 })
@@ -23,7 +30,7 @@ import {Component} from '@angular/core'
 export class UserInteractionPanel{
     randomNumber:number;
 
-    constructor(){
+    constructor(public gameEngineService:GameEngineService){
         this.randomNumber = 0;
     }
 

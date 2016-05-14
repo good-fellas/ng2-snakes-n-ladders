@@ -11,7 +11,7 @@ import {GameEngineService} from "../services/gaming-engine";
             <th colspan="2" class="text-center">Snake Advancers  </th>
         </thead>
          <tbody>
-             <tr *ngFor="#snakeAdvancer of gameEngineService.getSnakeAdvancers()">
+             <tr *ngFor="let snakeAdvancer of gameEngineService.getSnakeAdvancers()">
                     <td>{{snakeAdvancer.initialCellIndex}}</td>
                     <td>{{snakeAdvancer.finalCellIndex}}</td>
              </tr>

@@ -5,4 +5,9 @@ export class User {
 
     //We will assign a random icon class when a new user will be created
     bootstrapUserIconClasses = new Array()
+    
+    constructor(username:string){
+        this.username = username
+        this.currentCellIndex = 0
+    }
 }

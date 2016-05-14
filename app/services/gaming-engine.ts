@@ -8,6 +8,11 @@ export class GameEngineService{
     players = new Array();
     currentPlayer:User;
 
+    addPlayer(player:User){
+        this.players.push(player)
+        this.currentPlayer = player
+    }
+
     advancersList = [
         new Advancer("snake", 18, 5),
         new Advancer("snake", 49, 33),
