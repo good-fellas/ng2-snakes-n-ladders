@@ -5,8 +5,8 @@ import {User} from "../model/user";
 @Injectable()
 export class GameEngineService{
 
-    players = new Array();
-    currentPlayer:User;
+    players = [new User('Test User')];
+    currentPlayer = this.players[0];
 
     addPlayer(player:User){
         this.players.push(player)
@@ -31,8 +31,8 @@ export class GameEngineService{
         new Advancer("ladder",52, 67),
         new Advancer("ladder",72, 93),
         new Advancer("ladder",80, 100)
-    ]
-    
+    ];
+
     getSnakeAdvancers(){
         return this.advancersList.filter(this.isSnakeAdvancer)
     }
@@ -48,6 +48,5 @@ export class GameEngineService{
     isLadderAdvancer = (advancer: Advancer):boolean  => {
         return advancer.type == "ladder"
     }
-
 
 }

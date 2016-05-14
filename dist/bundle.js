@@ -42416,18 +42416,22 @@
 	};
 	var core_1 = __webpack_require__(7);
 	var cell_1 = __webpack_require__(313);
+	var cell_component_1 = __webpack_require__(314);
 	var BoardComponent = (function () {
 	    function BoardComponent() {
 	        this.cells = new Array();
-	        for (var index = 0; index < 100; index++) {
-	            this.cells.push(new cell_1.Cell(100 - index));
+	        for (var i = 0; i < 10; i++) {
+	            this.cells[i] = new Array();
+	            for (var j = 0; j < 10; j++) {
+	                this.cells.push(new cell_1.Cell(100 - (i * j)));
+	            }
 	        }
 	    }
 	    BoardComponent = __decorate([
 	        core_1.Component({
 	            selector: 'board',
-	            directives: [],
-	            template: "\n     <div>\n        <div *ngFor=\"let cell of cells; let i = index\">\n            \n         #{{cell.position}}\n        </div>       \n     </div>\n    "
+	            directives: [cell_component_1.CellComponent],
+	            template: "\n     <div>\n        <div cell-row class=\"row\" *ngFor=\"let rowCell of cells\" row-cell=\"rowCell\"></div>       \n     </div>\n    "
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], BoardComponent);
@@ -42449,6 +42453,55 @@
 	}());
 	exports.Cell = Cell;
 	//# sourceMappingURL=cell.js.map
+
+/***/ },
+/* 314 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var cell_1 = __webpack_require__(313);
+	var CellComponent = (function () {
+	    function CellComponent() {
+	        this.cells = new Array();
+	        console.log(this.curentRowCount);
+	        for (var index = 0; index < 10; index++) {
+	            this.cells.push(new cell_1.Cell(100 - (index * this.curentRowCount)));
+	        }
+	    }
+	    __decorate([
+	        core_1.Input('bank-name'), 
+	        __metadata('design:type', String)
+	    ], CellComponent.prototype, "bankName", void 0);
+	    __decorate([
+	        core_1.Input('curent-row-count'), 
+	        __metadata('design:type', Number)
+	    ], CellComponent.prototype, "curentRowCount", void 0);
+	    __decorate([
+	        core_1.Input('row-cell'), 
+	        __metadata('design:type', Object)
+	    ], CellComponent.prototype, "id", void 0);
+	    CellComponent = __decorate([
+	        core_1.Component({
+	            selector: '[cell-row]',
+	            directives: [],
+	            template: "\n        ::{{curentRowCount}}::\n        <div class=\"col-lg-1\" *ngFor=\"let cell of cells; let ij = index\" >\n            {{cell.position}}\n        </div>\n    "
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], CellComponent);
+	    return CellComponent;
+	}());
+	exports.CellComponent = CellComponent;
+	//# sourceMappingURL=cell.component.js.map
 
 /***/ }
 /******/ ]);

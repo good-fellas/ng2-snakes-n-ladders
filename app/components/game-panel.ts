@@ -9,9 +9,7 @@ import {BoardComponent} from "./board.component";
     directives: [BoardComponent, UserInteractionPanel, LadderAdvancerList, SnakeAdvancerList],
     template: `
  <div class="container">
-        <div class="row"> 
-            <div class="col-md-12 text-center"> <h1>Snake & Ladder</h1> </div>
-        </div>
+        
         
         <div class="row">
             <div class="col-md-1">
