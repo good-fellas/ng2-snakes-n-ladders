@@ -2,3 +2,8 @@ node_modules
 npm-debug.log
 src/app/**/*.js
 src/app/**/*.js.map
+.idea
+typings/browser
+typings/main
+typings/main.d.ts
+typings/browser.d.ts
