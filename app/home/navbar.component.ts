@@ -3,9 +3,7 @@ import {ROUTER_DIRECTIVES, Routes} from '@angular/router';
 
 @Component({
     selector: 'nav-bar',
-    //moduleId: module.id,
     directives: [ROUTER_DIRECTIVES],
-    //templateUrl: require('./navbar.html')
     template: `
         <nav class="navbar navbar-default">
     <div class="container-fluid">
