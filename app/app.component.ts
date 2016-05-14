@@ -5,10 +5,12 @@ import {BoardComponent} from "./board/board.component";
 import {NavBarComponent} from "./home/navbar.component";
 import {SnakeAdvancerList} from "./components/snake-advancers-list";
 import {LadderAdvancerList} from "./components/ladder-advancer-list";
+import {GameEngineService} from "./services/gaming-engine";
 
 @Component({
     selector: 'my-app',
     directives: [ROUTER_DIRECTIVES, NavBarComponent, SnakeAdvancerList, LadderAdvancerList],
+    providers: [GameEngineService],
     template: `
     <div class="container">
         <div class="row"> 
@@ -35,4 +37,6 @@ import {LadderAdvancerList} from "./components/ladder-advancer-list";
     {path: '/', component: HomeComponent}
 ])
 export class AppComponent {
+    constructor(public gameEngineService: GameEngineService){
+    }
 }

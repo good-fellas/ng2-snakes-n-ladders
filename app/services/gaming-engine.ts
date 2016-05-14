@@ -1,8 +1,12 @@
 import {Injectable} from "@angular/core"
 import {Advancer} from "../model/advancer";
+import {User} from "../model/user";
 
 @Injectable()
 export class GameEngineService{
+
+    players = new Array();
+    currentPlayer:User;
 
     advancersList = [
         new Advancer("snake", 18, 5),
@@ -39,5 +43,6 @@ export class GameEngineService{
     isLadderAdvancer = (advancer: Advancer):boolean  => {
         return advancer.type == "ladder"
     }
-    
+
+
 }
