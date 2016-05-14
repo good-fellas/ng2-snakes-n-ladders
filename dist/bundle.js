@@ -50,11 +50,13 @@
 	var core_1 = __webpack_require__(7);
 	var common_1 = __webpack_require__(181);
 	var app_component_1 = __webpack_require__(302);
+	var gaming_engine_1 = __webpack_require__(308);
 	platform_browser_dynamic_1.bootstrap(app_component_1.AppComponent, [
 	    router_1.ROUTER_PROVIDERS,
+	    gaming_engine_1.GameEngineService,
 	    core_1.provide(common_1.APP_BASE_HREF, { useValue: '/' })
 	]);
-	//# sourceMappingURL=main.js.map
+
 
 /***/ },
 /* 1 */
@@ -42066,26 +42068,31 @@
 	var home_component_1 = __webpack_require__(303);
 	var board_component_1 = __webpack_require__(304);
 	var navbar_component_1 = __webpack_require__(306);
+	var snake_advancers_list_1 = __webpack_require__(307);
+	var ladder_advancer_list_1 = __webpack_require__(310);
+	var gaming_engine_1 = __webpack_require__(308);
 	var AppComponent = (function () {
-	    function AppComponent() {
+	    function AppComponent(gameEngineService) {
+	        this.gameEngineService = gameEngineService;
 	    }
 	    AppComponent = __decorate([
 	        core_1.Component({
 	            selector: 'my-app',
-	            directives: [router_1.ROUTER_DIRECTIVES, navbar_component_1.NavBarComponent],
-	            template: "\n    <h1>Snake & Ladder</h1>\n    <nav-bar></nav-bar>\n    <router-outlet></router-outlet>\n  "
+	            directives: [router_1.ROUTER_DIRECTIVES, navbar_component_1.NavBarComponent, snake_advancers_list_1.SnakeAdvancerList, ladder_advancer_list_1.LadderAdvancerList],
+	            providers: [gaming_engine_1.GameEngineService],
+	            template: "\n    <div class=\"container\">\n        <div class=\"row\"> \n            <div class=\"col-md-12\"> <h1>Snake & Ladder</h1> </div>\n        </div>\n        \n        <div class=\"row\">\n            <div class=\"col-md-2\">\n            <snake-advancers-list></snake-advancers-list>\n            </div>\n            <div class=\"col-md-2\">\n            <ladder-advancers-list></ladder-advancers-list>\n</div>\n        </div>\n    </div>\n    \n    <nav-bar></nav-bar>\n    <router-outlet></router-outlet>\n  "
 	        }),
 	        router_1.Routes([
 	            { path: '/home', component: home_component_1.HomeComponent },
 	            { path: '/board', component: board_component_1.BoardComponent },
 	            { path: '/', component: home_component_1.HomeComponent }
 	        ]), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
 	    ], AppComponent);
 	    return AppComponent;
 	}());
 	exports.AppComponent = AppComponent;
-	//# sourceMappingURL=app.component.js.map
+
 
 /***/ },
 /* 303 */
@@ -42128,9 +42135,6 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
 	var core_1 = __webpack_require__(7);
 	var user_interaction_panel_1 = __webpack_require__(305);
 	var BoardComponent = (function () {
@@ -42140,14 +42144,13 @@
 	        core_1.Component({
 	            selector: 'board',
 	            directives: [user_interaction_panel_1.UserInteractionPanel],
-	            template: "\n    <div class=\"row\">\n        <div class=\"col-lg-9\">\n            <h4>This is board page</h4>\n        </div>\n        <user-interaction></user-interaction>\n     </div>\n    "
-	        }), 
-	        __metadata('design:paramtypes', [])
+	            template: "\n    <div class=\"row\">\n        <div class=\"col-lg-9\">\n            <h4>This is board page</h4>\n        </div>\n        <user-interaction-panel></user-interaction-panel>\n     </div>\n    "
+	        })
 	    ], BoardComponent);
 	    return BoardComponent;
 	}());
 	exports.BoardComponent = BoardComponent;
-
+	//# sourceMappingURL=board.component.js.map
 
 /***/ },
 /* 305 */
@@ -42160,24 +42163,27 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
 	var core_1 = __webpack_require__(7);
 	var UserInteractionPanel = (function () {
 	    function UserInteractionPanel() {
+	        this.randomNumber = 0;
 	    }
+	    UserInteractionPanel.prototype.getRandomNumber = function () {
+	        this.randomNumber = this.getRandomInt(1, 7);
+	    };
+	    UserInteractionPanel.prototype.getRandomInt = function (min, max) {
+	        return Math.floor(Math.random() * (max - min)) + min;
+	    };
 	    UserInteractionPanel = __decorate([
 	        core_1.Component({
-	            selector: 'user-interaction',
-	            template: "\n    <div class=\"col-lg-3\">\n        <div class=\"row\">\n            <div class=\"col-lg-12\">\n                <h4>Manish kapoor</h4>        \n            </div>\n            <div class=\"col-lg-12\">\n                <img src=\"../../assets/images/rolling-dice.png\" />        \n            </div>\n            <div class=\"col-lg-12\">\n                <button>Roll</button>        \n            </div>\n            <div class=\"col-lg-12\">\n                1        \n            </div>\n            \n        </div>\n    </div>\n    "
-	        }), 
-	        __metadata('design:paramtypes', [])
+	            selector: 'user-interaction-panel',
+	            template: "\n    <div class=\"col-lg-3\">\n        <div class=\"row\">\n            <div class=\"col-lg-12\">\n                <h4>Manish kapoor</h4>        \n            </div>\n            <div class=\"col-lg-12\">\n                <img src=\"../../assets/images/rolling-dice.png\" />        \n            </div>\n            <div class=\"col-lg-12\">\n                <button (click)=\"getRandomNumber()\">Roll</button>        \n            </div>\n            <div class=\"col-lg-12\">\n                {{randomNumber}}        \n            </div>\n        </div>\n    </div>\n    "
+	        })
 	    ], UserInteractionPanel);
 	    return UserInteractionPanel;
 	}());
 	exports.UserInteractionPanel = UserInteractionPanel;
-
+	//# sourceMappingURL=user-interaction-panel.js.map
 
 /***/ },
 /* 306 */
@@ -42210,6 +42216,146 @@
 	    return NavBarComponent;
 	}());
 	exports.NavBarComponent = NavBarComponent;
+
+
+/***/ },
+/* 307 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var gaming_engine_1 = __webpack_require__(308);
+	var SnakeAdvancerList = (function () {
+	    function SnakeAdvancerList(gameEngineService) {
+	        this.gameEngineService = gameEngineService;
+	    }
+	    SnakeAdvancerList = __decorate([
+	        core_1.Component({
+	            selector: "snake-advancers-list",
+	            template: "\n  <div class=\"row\">\n   <div class=\"col-md-12\"> \n    <table class=\"table table-bordered table-striped\">\n         <thead>\n            <th colspan=\"2\" class=\"text-center\">Snake Advancers  </th>\n        </thead>\n         <tbody>\n             <tr *ngFor=\"#snakeAdvancer of gameEngineService.getSnakeAdvancers()\">\n                    <td>{{snakeAdvancer.initialCellIndex}}</td>\n                    <td>{{snakeAdvancer.finalCellIndex}}</td>\n             </tr>\n        </tbody>\n    </table>\n   </div>\n  </div>\n    "
+	        }), 
+	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
+	    ], SnakeAdvancerList);
+	    return SnakeAdvancerList;
+	}());
+	exports.SnakeAdvancerList = SnakeAdvancerList;
+
+
+/***/ },
+/* 308 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var advancer_1 = __webpack_require__(309);
+	var GameEngineService = (function () {
+	    function GameEngineService() {
+	        this.players = new Array();
+	        this.advancersList = [
+	            new advancer_1.Advancer("snake", 18, 5),
+	            new advancer_1.Advancer("snake", 49, 33),
+	            new advancer_1.Advancer("snake", 43, 23),
+	            new advancer_1.Advancer("snake", 56, 26),
+	            new advancer_1.Advancer("snake", 56, 26),
+	            new advancer_1.Advancer("snake", 65, 44),
+	            new advancer_1.Advancer("snake", 88, 53),
+	            new advancer_1.Advancer("snake", 92, 71),
+	            new advancer_1.Advancer("snake", 99, 35),
+	            new advancer_1.Advancer("ladder", 6, 16),
+	            new advancer_1.Advancer("ladder", 9, 31),
+	            new advancer_1.Advancer("ladder", 19, 38),
+	            new advancer_1.Advancer("ladder", 21, 79),
+	            new advancer_1.Advancer("ladder", 28, 84),
+	            new advancer_1.Advancer("ladder", 52, 67),
+	            new advancer_1.Advancer("ladder", 72, 93),
+	            new advancer_1.Advancer("ladder", 80, 100)
+	        ];
+	        this.isSnakeAdvancer = function (advancer) {
+	            return advancer.type == "snake";
+	        };
+	        this.isLadderAdvancer = function (advancer) {
+	            return advancer.type == "ladder";
+	        };
+	    }
+	    GameEngineService.prototype.getSnakeAdvancers = function () {
+	        return this.advancersList.filter(this.isSnakeAdvancer);
+	    };
+	    GameEngineService.prototype.getLadderAdvancers = function () {
+	        return this.advancersList.filter(this.isLadderAdvancer);
+	    };
+	    GameEngineService = __decorate([
+	        core_1.Injectable(), 
+	        __metadata('design:paramtypes', [])
+	    ], GameEngineService);
+	    return GameEngineService;
+	}());
+	exports.GameEngineService = GameEngineService;
+
+
+/***/ },
+/* 309 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Advancer = (function () {
+	    function Advancer(type, initialCellIndex, finalCellIndex) {
+	        this.type = type;
+	        this.initialCellIndex = initialCellIndex;
+	        this.finalCellIndex = finalCellIndex;
+	    }
+	    return Advancer;
+	}());
+	exports.Advancer = Advancer;
+	//# sourceMappingURL=advancer.js.map
+
+/***/ },
+/* 310 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var gaming_engine_1 = __webpack_require__(308);
+	var LadderAdvancerList = (function () {
+	    function LadderAdvancerList(gameEngineService) {
+	        this.gameEngineService = gameEngineService;
+	    }
+	    LadderAdvancerList = __decorate([
+	        core_1.Component({
+	            selector: "ladder-advancers-list",
+	            template: "\n<div class=\"row\">\n   <div class=\"col-md-12\"> \n    <table class=\"table table-bordered table-striped\">\n         <thead>\n            <th colspan=\"2\" class=\"text-center\"> Ladder Advancers </th>\n        </thead>\n         <tbody>\n             <tr *ngFor=\"#ladderAdvancer of gameEngineService.getLadderAdvancers()\">\n                    <td>{{ladderAdvancer.initialCellIndex}}</td>\n                    <td>{{ladderAdvancer.finalCellIndex}}</td>\n             </tr>\n        </tbody>\n    </table>\n   </div>\n  </div>\n"
+	        }), 
+	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
+	    ], LadderAdvancerList);
+	    return LadderAdvancerList;
+	}());
+	exports.LadderAdvancerList = LadderAdvancerList;
 
 
 /***/ }
