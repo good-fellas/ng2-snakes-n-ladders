@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Routes} from '@angular/router';
-import {HomeComponent} from "./home/home.component";
-import {BoardComponent} from "./board/board.component";
-import {NavBarComponent} from "./home/navbar.component";
+import {HomeComponent} from "./components/home.component.ts";
+import {BoardComponent} from "./components/board.component.ts";
+import {NavBarComponent} from "./components/navbar.component.ts";
 import {SnakeAdvancerList} from "./components/snake-advancers-list";
 import {LadderAdvancerList} from "./components/ladder-advancer-list";
 import {GameEngineService} from "./services/gaming-engine";

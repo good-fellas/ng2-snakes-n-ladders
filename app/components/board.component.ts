@@ -1,7 +1,7 @@
 import {Component} from "@angular/core";
-import {UserInteractionPanel} from "../components/user-interaction-panel"
-import {LadderAdvancerList} from "../components/ladder-advancer-list";
-import {SnakeAdvancerList} from "../components/snake-advancers-list";
+import {UserInteractionPanel} from "./user-interaction-panel";
+import {LadderAdvancerList} from "./ladder-advancer-list";
+import {SnakeAdvancerList} from "./snake-advancers-list";
 
 @Component({
     selector: 'board',
