@@ -42098,9 +42098,6 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
 	var core_1 = __webpack_require__(7);
 	var HomeComponent = (function () {
 	    function HomeComponent() {
@@ -42108,10 +42105,8 @@
 	    HomeComponent = __decorate([
 	        core_1.Component({
 	            selector: 'home',
-	            moduleId: module.id,
-	            templateUrl: 'home.html'
-	        }), 
-	        __metadata('design:paramtypes', [])
+	            template: "\n        This is home page\n    "
+	        })
 	    ], HomeComponent);
 	    return HomeComponent;
 	}());
@@ -42129,9 +42124,6 @@
 	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
 	var core_1 = __webpack_require__(7);
 	var BoardComponent = (function () {
 	    function BoardComponent() {
@@ -42139,10 +42131,8 @@
 	    BoardComponent = __decorate([
 	        core_1.Component({
 	            selector: 'board',
-	            moduleId: module.id,
-	            templateUrl: 'board.html'
-	        }), 
-	        __metadata('design:paramtypes', [])
+	            template: "\n        This is board page\n    "
+	        })
 	    ], BoardComponent);
 	    return BoardComponent;
 	}());
@@ -42169,9 +42159,7 @@
 	    NavBarComponent = __decorate([
 	        core_1.Component({
 	            selector: 'nav-bar',
-	            //moduleId: module.id,
 	            directives: [router_1.ROUTER_DIRECTIVES],
-	            //templateUrl: require('./navbar.html')
 	            template: "\n        <nav class=\"navbar navbar-default\">\n    <div class=\"container-fluid\">\n        <!-- Brand and toggle get grouped for better mobile display -->\n        <div class=\"navbar-header\">\n            <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                <ul class=\"nav navbar-nav\">\n                    <li [ngClass]=\"{'active': (menu == 'home')}\" (click)=\"menu = 'home'\"><a [routerLink]=\"['/home']\">Home</a></li>\n                    <li [ngClass]=\"{'active': (menu == 'board')}\" (click)=\"menu = 'board'\"><a [routerLink]=\"['/board']\">Board</a></li>\n                </ul>\n            </div>\n        </div>\n    </div>\n</nav>\n    "
 	        })
 	    ], NavBarComponent);
