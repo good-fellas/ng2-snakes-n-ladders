@@ -8,7 +8,7 @@ import {NavBarComponent} from "./home/navbar.component";
     selector: 'my-app',
     directives: [ROUTER_DIRECTIVES, NavBarComponent],
     template: `
-    <h1>Component Router</h1>
+    <h1>Snake & Ladder</h1>
     <nav-bar></nav-bar>
     <router-outlet></router-outlet>
   `
