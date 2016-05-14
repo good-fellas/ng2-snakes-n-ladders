@@ -15,7 +15,7 @@ import {Cell} from "../model/cell"
 })
 export class BoardComponent {
 
-    cells = [];
+    cells = new Array();
 
     constructor(){
         for (var index = 0; index < 100; index++) {
