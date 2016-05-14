@@ -9,14 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var router_1 = require('@angular/router');
+var home_component_1 = require("./home/home.component");
 var AppComponent = (function () {
     function AppComponent() {
     }
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            template: '<h1>AngularAttack 2016 - Good fellas</h1><p>Your project runs!</p>'
-        }), 
+            template: "\n    <h1>Component Router</h1>\n    <nav>\n      <a [routerLink]=\"['/home']\">Home</a>\n    </nav>\n    <router-outlet></router-outlet>\n  ",
+            directives: [router_1.ROUTER_DIRECTIVES]
+        }),
+        router_1.Routes([
+            { path: '/home', component: home_component_1.HomeComponent },
+            { path: '/', component: home_component_1.HomeComponent }
+        ]), 
         __metadata('design:paramtypes', [])
     ], AppComponent);
     return AppComponent;
