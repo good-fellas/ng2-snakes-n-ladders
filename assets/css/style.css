@@ -1,3 +1,12 @@
 .margin-bottom-10{
     margin-bottom: 10px;
 }
+.social-buttons>li>a>i{
+    padding-top: 9px;
+}
+.panel-default > .panel-heading{
+    background-color: #FEC503;
+}
+#rules-wrapper-div{
+    background-color: #0f0f0f;
+}
