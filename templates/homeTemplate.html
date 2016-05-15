@@ -2,50 +2,9 @@
     <div class="container">
         <div class="intro-text">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Rules</div>
-                        <div class="panel-body rule-box" id="rules-wrapper-div">
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <strong>Understand the object of the game.</strong>
-                                    The object of the game is to be the first player to reach the end by moving across the board from square one to the final square.</li>
-                                <li class="list-group-item">
-                                    <strong>Who goes first?</strong>
-                                    System will decide who goes first.
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Roll the die and move.</strong>
-                                    Role the dice by clicking on the roll the dice button and system will move your position marker to the appropriate place according to the number shown on the dice.
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>Climb up ladders.</strong>
-                                    The ladders on the game board allow you to move upwards and get ahead faster. If you land exactly on a square that shows an image of the bottom of a ladder, then system will move your position marker all the way up to the square at the top of the ladder.
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>
-                                        Slide down snakes or chutes.
-                                    </strong>
-                                    Game also have snakes on the board. Snakes move you back on the board because you have to slide down them.
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>
-                                        Take an extra turn if you roll a six.
-                                    </strong>
-                                    If you roll a six, then you get an extra turn. First, system will move your position marker forward six squares and then you are allowed to roll the die again. If you land on any snakes or ladders, follow the instructions above to move up or down and then roll again to take your extra turn. As long as you keep rolling sixes, you can keep moving.
-                                </li>
-                                <li class="list-group-item">
-                                    <strong>
-                                        Land exactly on the last square to win.
-                                    </strong>
-                                    The first person to reach the highest square on the board wins. But there's a twist! If you roll too high, your piece "bounces" off the last square and moves back. You can only win by rolling the exact number needed to land on the last square.
-                                </li>
-                            </ul>
-                            <a target="_blank" href="http://www.wikihow.com/Play-Snakes-and-Ladders">Rules attribution</a>
-                        </div>
-                    </div>
+                <div class="col-md-2">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <div class="panel panel-default">
                         <div class="panel-heading">Add Players</div>
                             <div class="panel-body player-box">
@@ -61,11 +20,12 @@
                                         </div>
                                         <div class="form-group">
                                             <button class="btn btn-default" (click)="addPlayer()" [disabled]="!(gameEngineService.players.length < 5)">Add Player</button>
+                                            <a class="btn btn-success" [routerLink]="['/board']" [class.disabled]="!(gameEngineService.players.length > 1)">Play</a>
                                         </div>
                                     </form>
-                                    <div>
-                                        <a class="btn btn-success" [routerLink]="['/board']" [class.disabled]="!(gameEngineService.players.length > 1)">Play</a>
-                                    </div>
+                                    <!--<div>-->
+                                        <!--<a class="btn btn-success" [routerLink]="['/board']" [class.disabled]="!(gameEngineService.players.length > 1)">Play</a>-->
+                                    <!--</div>-->
                                 </div>
                                 <div class="col-lg-4">
                                     <ul class="list-group">
@@ -80,6 +40,8 @@
                             </div>
                         </div>
                     </div>
+                <div class="col-md-2">
+                </div>
             </div>
         </div>
     </div>

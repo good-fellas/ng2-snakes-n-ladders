@@ -13,3 +13,10 @@
 section#team{
     padding-bottom: 0px;
 }
+header{
+    padding-top:100px;
+    height:100%
+}
+#intro-text{
+    padding-top:50px;
+}
