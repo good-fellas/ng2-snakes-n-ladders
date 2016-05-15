@@ -14,7 +14,7 @@ import {GameEngineService} from "../services/gaming-engine";
         .cell { 
             height: 70px;
             width: 70px;
-            float: right;
+            float: left;
          }
         .user-icon {
             font-size: 200%;

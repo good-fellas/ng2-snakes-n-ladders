@@ -13,23 +13,27 @@ export class GameEngineService{
     userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
 
     advancersList = [
-        new Advancer("snake", 18, 5),
-        new Advancer("snake", 49, 33),
-        new Advancer("snake", 43, 23),
-        new Advancer("snake", 56, 26),
-        new Advancer("snake", 56, 26),
-        new Advancer("snake", 65, 44),
-        new Advancer("snake", 88, 53),
-        new Advancer("snake", 92, 71),
-        new Advancer("snake", 99, 35),
-        new Advancer("ladder",6, 16),
-        new Advancer("ladder",9, 31),
-        new Advancer("ladder",19, 38),
-        new Advancer("ladder",21, 79),
+        new Advancer("snake", 99,80),
+        new Advancer("snake", 95, 75),
+        new Advancer("snake", 92, 88),
+        new Advancer("snake", 89, 68),
+        new Advancer("snake", 74, 53),
+        new Advancer("snake", 64, 60),
+        new Advancer("snake", 62, 19),
+        new Advancer("snake", 49, 11),
+        new Advancer("snake", 46, 25),
+        new Advancer("snake", 16, 6),
+        new Advancer("ladder",2, 38),
+        new Advancer("ladder",7, 14),
+        new Advancer("ladder",8, 31),
+        new Advancer("ladder",15, 26),
+        new Advancer("ladder",21, 42),
         new Advancer("ladder",28, 84),
-        new Advancer("ladder",52, 67),
-        new Advancer("ladder",72, 93),
-        new Advancer("ladder",80, 100)
+        new Advancer("ladder",36, 44),
+        new Advancer("ladder",51, 67),
+        new Advancer("ladder",71, 91),
+        new Advancer("ladder",78, 98),
+        new Advancer("ladder",87, 94)
     ];
 
     addPlayer(player:User) {
