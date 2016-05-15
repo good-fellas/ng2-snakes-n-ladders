@@ -51,9 +51,11 @@
 	var common_1 = __webpack_require__(181);
 	var app_component_1 = __webpack_require__(302);
 	var gaming_engine_1 = __webpack_require__(304);
+	var platform_browser_1 = __webpack_require__(339);
 	platform_browser_dynamic_1.bootstrap(app_component_1.AppComponent, [
 	    router_1.ROUTER_PROVIDERS,
 	    gaming_engine_1.GameEngineService,
+	    platform_browser_1.MODAL_BROWSER_PROVIDERS,
 	    core_1.provide(common_1.APP_BASE_HREF, { useValue: '/' })
 	]);
 	//# sourceMappingURL=main.js.map
@@ -42071,8 +42073,9 @@
 	var ladder_advancer_list_1 = __webpack_require__(309);
 	var gaming_engine_1 = __webpack_require__(304);
 	var game_panel_1 = __webpack_require__(310);
-	var about_component_1 = __webpack_require__(315);
-	var rules_1 = __webpack_require__(316);
+	var about_component_1 = __webpack_require__(336);
+	var rules_1 = __webpack_require__(337);
+	var credit_component_1 = __webpack_require__(338);
 	var AppComponent = (function () {
 	    function AppComponent(gameEngineService) {
 	        this.gameEngineService = gameEngineService;
@@ -42089,6 +42092,7 @@
 	            { path: '/about', component: about_component_1.AboutComponent },
 	            { path: '/board', component: game_panel_1.GamePanel },
 	            { path: '/rules', component: rules_1.Rules },
+	            { path: '/credit', component: credit_component_1.Credit },
 	            { path: '/', component: home_component_ts_1.HomeComponent }
 	        ]), 
 	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
@@ -42121,18 +42125,24 @@
 	        this.gameEngineService = gameEngineService;
 	    }
 	    HomeComponent.prototype.addPlayer = function () {
-	        if (this.playerName) {
+	        if (this.playerName && !this.nameAlreadyExist(this.playerName)) {
 	            var player = new user_1.User(this.playerName);
 	            this.gameEngineService.addPlayer(player);
 	            this.playerName = "";
 	        }
+	    };
+	    HomeComponent.prototype.nameAlreadyExist = function (name) {
+	        this.nameExist = this.gameEngineService.players.find(function (player) {
+	            return player.username === name;
+	        }) ? true : false;
+	        return this.nameExist;
 	    };
 	    HomeComponent = __decorate([
 	        core_1.Component({
 	            selector: 'home',
 	            directives: [router_1.ROUTER_DIRECTIVES],
 	            templateUrl: '/templates/homeTemplate.html',
-	            styles: ["\n        a.disabled {\n           pointer-events: none;\n           cursor: not-allowed; \n        }\n        .info-box {\n            height: 85px;\n        }\n        .player-box {\n            height: 290px;\n        }\n    "]
+	            styles: ["\n        a.disabled {\n           pointer-events: none;\n           cursor: not-allowed; \n        }\n        .player-box {\n            height: 290px;\n        }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
 	    ], HomeComponent);
@@ -42160,11 +42170,15 @@
 	var GameEngineService = (function () {
 	    function GameEngineService() {
 	        this.players = new Array();
+	        this.completedPlayers = new Array();
 	        this.currentPlayerIndex = 0;
 	        this.currentPlayer = this.players[this.currentPlayerIndex];
 	        this.messages = new Array();
 	        this.cells = new Array();
+	        this.isGameInProgress = false;
+	        this.currentMenu = "home";
 	        this.userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
+	        this.rank = { 1: "Winner", 2: "First Runner-up", 3: "Second Runner-up" };
 	        this.advancersList = [
 	            new advancer_1.Advancer("snake", 99, 80),
 	            new advancer_1.Advancer("snake", 95, 75),
@@ -42197,7 +42211,9 @@
 	        };
 	    }
 	    GameEngineService.prototype.addPlayer = function (player) {
-	        player.displayImage = this.userIcons[this.players.length];
+	        var randomValue = this.getRandomInt(1, this.userIcons.length);
+	        player.displayImage = this.userIcons[randomValue];
+	        this.userIcons.splice(randomValue, 1);
 	        this.players.push(player);
 	        this.currentPlayer = player;
 	        this.currentPlayerIndex = this.players.length - 1;
@@ -42210,6 +42226,24 @@
 	    };
 	    GameEngineService.prototype.completeUserTurn = function (rolledValue) {
 	        var nextCellIndex = this.getNextCellIndex(rolledValue);
+	        this.updateCellState(nextCellIndex);
+	        this.updateCurrentUserState(nextCellIndex);
+	        this.currentPlayer = this.getNextPlayer(rolledValue);
+	    };
+	    GameEngineService.prototype.updateCurrentUserState = function (nextCellIndex) {
+	        var _this = this;
+	        this.currentPlayer.currentCellIndex = nextCellIndex;
+	        if (nextCellIndex === 100) {
+	            this.players = this.players.filter(function (player) {
+	                return player.username !== _this.currentPlayer.username;
+	            });
+	            this.currentPlayer.rank = this.completedPlayers.length + 1;
+	            this.completedPlayers.push(this.currentPlayer);
+	            this.currentPlayer = this.players[0];
+	            this.currentPlayerIndex = 0;
+	        }
+	    };
+	    GameEngineService.prototype.updateCellState = function (nextCellIndex) {
 	        var cell = this.cells[this.currentPlayer.currentCellIndex];
 	        if (cell) {
 	            var index = cell.userIcons.indexOf(this.currentPlayer.displayImage); // <-- Not supported in <IE9
@@ -42217,11 +42251,8 @@
 	                cell.userIcons.splice(index, 1);
 	            }
 	        }
-	        console.log(cell);
-	        this.currentPlayer.currentCellIndex = nextCellIndex;
 	        var nextCell = this.cells[nextCellIndex];
 	        nextCell.userIcons.push(this.currentPlayer.displayImage);
-	        this.currentPlayer = this.getNextPlayer(rolledValue);
 	    };
 	    GameEngineService.prototype.getNextCellIndex = function (rolledValue) {
 	        var nextCellIndex = this.currentPlayer.currentCellIndex + rolledValue;
@@ -42237,14 +42268,14 @@
 	            nextCellIndex = advancer.finalCellIndex;
 	            advMsg = this.advancerMsg[advancer.type];
 	        }
-	        this.addMessageLog(this.currentPlayer, advMsg + this.currentPlayer.username + ' moved to ' + nextCellIndex + '.');
+	        this.addMessageLog(this.currentPlayer, advMsg + ' Moved you to ' + nextCellIndex + '.');
 	        return nextCellIndex;
 	    };
 	    GameEngineService.prototype.getNextPlayer = function (rolledValue) {
 	        var nextPlayer;
 	        if (rolledValue === 6) {
 	            nextPlayer = this.currentPlayer;
-	            this.addMessageLog(this.currentPlayer, "Congratulation " + this.currentPlayer.username + "! You got another turn...");
+	            this.addMessageLog(this.currentPlayer, "Congratulation! You got another turn...");
 	        }
 	        else {
 	            this.currentPlayerIndex = (this.players.length - 1 === this.currentPlayerIndex) ? 0 : (this.currentPlayerIndex + 1);
@@ -42256,8 +42287,20 @@
 	        console.log(this.messages);
 	        this.messages.unshift({
 	            'userIcon': user.displayImage,
+	            'username': user.username,
 	            'text': message
 	        });
+	    };
+	    GameEngineService.prototype.resetGame = function () {
+	        this.players = new Array();
+	        this.completedPlayers = new Array();
+	        this.currentPlayerIndex = 0;
+	        this.currentPlayer = null;
+	        this.messages = new Array();
+	        this.userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
+	    };
+	    GameEngineService.prototype.getRandomInt = function (min, max) {
+	        return Math.floor(Math.random() * (max - min)) + min;
 	    };
 	    GameEngineService = __decorate([
 	        core_1.Injectable(), 
@@ -42315,17 +42358,29 @@
 	};
 	var core_1 = __webpack_require__(7);
 	var router_1 = __webpack_require__(280);
+	var gaming_engine_1 = __webpack_require__(304);
 	var NavBarComponent = (function () {
-	    function NavBarComponent() {
-	        this.menu = "home";
+	    function NavBarComponent(gameEngineService) {
+	        this.gameEngineService = gameEngineService;
 	    }
+	    NavBarComponent.prototype.getManu = function () {
+	        console.log("getter ", this.gameEngineService.currentMenu);
+	        return this.gameEngineService.currentMenu;
+	    };
+	    NavBarComponent.prototype.setMenu = function (menu) {
+	        console.log("setter ", this.gameEngineService.currentMenu);
+	        this.gameEngineService.currentMenu = menu;
+	    };
+	    NavBarComponent.prototype.isNotOnBoard = function () {
+	        return this.gameEngineService.currentMenu == "board";
+	    };
 	    NavBarComponent = __decorate([
 	        core_1.Component({
 	            selector: 'nav-bar',
 	            directives: [router_1.ROUTER_DIRECTIVES],
-	            template: "\n        <nav class=\"navbar navbar-default navbar-fixed-top\">\n                <div class=\"container\">\n                    <!-- Brand and toggle get grouped for better mobile display -->\n                    <div class=\"navbar-header page-scroll\">\n                        <a class=\"navbar-brand page-scroll\" href=\"#page-top\">Snake and Ladder</a>\n                    </div>\n        \n                    <!-- Collect the nav links, forms, and other content for toggling -->\n                    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                        <ul class=\"nav navbar-nav navbar-right\">\n                            <li [ngClass]=\"{'active': (menu == 'home')}\" (click)=\"menu = 'home'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/home']\">Home</a>\n                            </li>\n                            <li (click)=\"menu = 'rules'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/rules']\">Rules</a>\n                            </li>\n                            <li (click)=\"menu = 'about'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/about']\">Team</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <!-- /.navbar-collapse -->\n                </div>\n                <!-- /.container-fluid -->\n            </nav>\n\n    "
+	            template: "\n        <nav class=\"navbar navbar-default navbar-fixed-top\" [ngClass]=\"{'navbar-shrink': (getManu() == 'board')}\">\n                <div class=\"container\">\n                    <!-- Brand and toggle get grouped for better mobile display -->\n                    <div class=\"navbar-header page-scroll\">\n                        <a class=\"navbar-brand page-scroll\" href=\"#page-top\">Snakes and Ladders</a>\n                    </div>\n        \n                    <!-- Collect the nav links, forms, and other content for toggling -->\n                    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                        <ul class=\"nav navbar-nav navbar-right\">\n                            <li>\n                                <a [routerLink]=\"['/board']\"\n                                 *ngIf=\"gameEngineService.isGameInProgress && !isNotOnBoard()\" \n                                 (click)=\"setMenu('board')\">\n                                 Resume Game </a>\n                            </li>\n                            <li [ngClass]=\"{'active': (getManu() == 'home')}\" (click)=\"setMenu('home')\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/home']\">Home</a>\n                            </li>\n                            <li [ngClass]=\"{'active': (getManu() == 'rules')}\" (click)=\"setMenu('rules')\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/rules']\">Rules</a>\n                            </li>\n                            <li [ngClass]=\"{'active': (getManu() == 'about')}\" (click)=\"setMenu('about')\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/about']\">Team</a>\n                            </li>\n                            <li [ngClass]=\"{'active': (getManu() == 'credit')}\" (click)=\"setMenu('credit')\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/credit']\">Credits</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <!-- /.navbar-collapse -->\n                </div>\n                <!-- /.container-fluid -->\n            </nav>\n\n    "
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
 	    ], NavBarComponent);
 	    return NavBarComponent;
 	}());
@@ -42415,16 +42470,24 @@
 	var ladder_advancer_list_1 = __webpack_require__(309);
 	var snake_advancers_list_1 = __webpack_require__(308);
 	var board_component_1 = __webpack_require__(312);
+	var winning_modal_component_1 = __webpack_require__(315);
+	var bootstrap_1 = __webpack_require__(316);
 	var GamePanel = (function () {
-	    function GamePanel() {
+	    function GamePanel(modal, viewContainer) {
+	        this.modal = modal;
+	        modal.defaultViewContainer = viewContainer;
 	    }
+	    GamePanel.prototype.openWinnerDialog = function () {
+	        return this.modal.open(winning_modal_component_1.WinnerModal);
+	    };
 	    GamePanel = __decorate([
 	        core_1.Component({
 	            selector: 'game-panel',
-	            directives: [board_component_1.BoardComponent, user_interaction_panel_1.UserInteractionPanel, ladder_advancer_list_1.LadderAdvancerList, snake_advancers_list_1.SnakeAdvancerList],
-	            template: "\n <div class=\"container\"  style=\"padding-top:110px\">\n    <div class=\"intro-text\">\n        <div class=\"row\"> \n            <div class=\"col-md-9\" style=\"width: 650px; height: 650px;\">\n                <board></board>\n            </div>\n            <div class=\"col-md-3\">\n                <user-interaction-panel></user-interaction-panel>\n            </div>\n        </div>\n    </div>\n </div>\n    "
+	            viewProviders: bootstrap_1.BS_MODAL_PROVIDERS.slice(),
+	            directives: [board_component_1.BoardComponent, user_interaction_panel_1.UserInteractionPanel, ladder_advancer_list_1.LadderAdvancerList, snake_advancers_list_1.SnakeAdvancerList, winning_modal_component_1.WinnerModal],
+	            template: "\n <div class=\"container\"  style=\"padding-top:80px\">\n    <div class=\"intro-text\">\n        <div class=\"row\"> \n            <div class=\"col-md-8\" style=\"width: 580px; height: 580px;\">\n                <board></board>\n            </div>\n            <div class=\"col-md-4\">\n                <user-interaction-panel (game-finished)=\"openWinnerDialog()\"></user-interaction-panel>\n            </div>\n        </div>\n    </div>\n </div>\n    "
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [bootstrap_1.Modal, core_1.ViewContainerRef])
 	    ], GamePanel);
 	    return GamePanel;
 	}());
@@ -42450,6 +42513,7 @@
 	var UserInteractionPanel = (function () {
 	    function UserInteractionPanel(gameEngineService) {
 	        this.gameEngineService = gameEngineService;
+	        this.gameFinished = new core_1.EventEmitter();
 	        this.randomNumber = 0;
 	        this.hideRollingDice = true;
 	        this.hideDiceResult = true;
@@ -42465,13 +42529,13 @@
 	            _this.hideDiceResult = false;
 	            _this.setDiceResultImagePath(_this.randomNumber);
 	            _this.gameEngineService.completeUserTurn(_this.randomNumber);
+	            if (_this.gameEngineService.players.length < 2) {
+	                _this.gameFinished.emit("finished");
+	            }
 	        }, 1000);
 	    };
 	    UserInteractionPanel.prototype.setRandomNumber = function () {
-	        this.randomNumber = this.getRandomInt(1, 7);
-	    };
-	    UserInteractionPanel.prototype.getRandomInt = function (min, max) {
-	        return Math.floor(Math.random() * (max - min)) + min;
+	        this.randomNumber = this.gameEngineService.getRandomInt(1, 7);
 	    };
 	    UserInteractionPanel.prototype.setDiceResultImagePath = function (diceResult) {
 	        var parentDirectoryPath;
@@ -42481,11 +42545,15 @@
 	        this.diceResultImagePath = parentDirectoryPath + diceResult + fileExtension;
 	        console.log("image path: ", this.diceResultImagePath);
 	    };
+	    __decorate([
+	        core_1.Output('game-finished'), 
+	        __metadata('design:type', Object)
+	    ], UserInteractionPanel.prototype, "gameFinished", void 0);
 	    UserInteractionPanel = __decorate([
 	        core_1.Component({
 	            selector: 'user-interaction-panel',
-	            template: "\n        <div class=\"panel panel-default\">\n            <div class=\"panel-heading\">\n                <span class=\"fa {{gameEngineService.currentPlayer.displayImage}}\"></span> <strong>{{gameEngineService.currentPlayer.username}}'s</strong> Turn\n            </div>\n            <div class=\"panel-body\">\n                <div class=\"row\">\n                    <div class=\"col-lg-12\" style=\"height:70px\">\n                        <img [hidden]=\"hideRollingDice\"\n                            src=\"../../assets/images/rolling-dice.gif\" />        \n                \n                        <img [hidden]=\"hideDiceResult\" height=\"50px\" style=\"padding-left:5px;padding-top:5px\"\n                            src=\"{{diceResultImagePath}}\" />\n                    </div>\n                    <div class=\"col-lg-12\">\n                        <button class=\"btn btn-success\" (click)=\"rollButtonClickHandler()\">Roll</button>        \n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"panel panel-default\">\n            <div class=\"panel-heading\">\n                <strong>Logs</strong>\n            </div>\n            <div class=\"panel-body\">\n                <div class=\"row log\" *ngFor=\"let info of gameEngineService.messages\">\n                    <i class=\"fa {{info.userIcon}}\"></i> {{info.text}}\n                </div>\n            </div>\n            \n        </div>\n    ",
-	            styles: ["\n        .log {\n            border-bottom: 1px dashed #ccc;\n        }\n    "]
+	            template: "\n        <div class=\"panel panel-default\">\n            <div class=\"panel-heading\">\n                <span class=\"fa {{gameEngineService.currentPlayer.displayImage}}\"></span> <strong>{{gameEngineService.currentPlayer.username}}'s</strong> Turn\n            </div>\n            <div class=\"panel-body\">\n                <div class=\"row\">\n                    <div class=\"col-lg-12\" style=\"height:70px\">\n                        <img [hidden]=\"hideRollingDice\"\n                            src=\"../../assets/images/rolling-dice.gif\" />        \n                \n                        <img [hidden]=\"hideDiceResult\" height=\"50px\" style=\"padding-left:5px;padding-top:5px\"\n                            src=\"{{diceResultImagePath}}\" />\n                    </div>\n                    <div class=\"col-lg-12\">\n                        <button class=\"btn btn-success\" (click)=\"rollButtonClickHandler()\">Roll</button>        \n                    </div>\n                </div>\n            </div>\n        </div>\n        \n        \n        <div class=\"panel panel-default\">\n            <div class=\"panel-heading\">\n                <strong>Recent Activities</strong>\n            </div>\n            <div class=\"panel-body\">\n                <table class=\"table table-hover\">\n                    <tbody>\n                        <tr *ngFor=\"let info of gameEngineService.messages\">\n                            <td><i class=\"fa {{info.userIcon}}\"></i> <strong>{{info.username}}</strong> : {{info.text}}</td>\n                        </tr>\n                    </tbody>\n                </table>\n            </div>\n        </div>\n    ",
+	            styles: ["\n        .log {\n            border-bottom: 1px dashed #ccc;\n        }\n                table {\n            width: 100%;\n        }\n\n        thead, tbody, tr, td, th { display: block; }\n\n        tr:after {\n            content: ' ';\n            display: block;\n            visibility: hidden;\n            clear: both;\n        }\n\n        thead th {\n            height: 30px;\n\n            /*text-align: left;*/\n        }\n\n        tbody {\n            height: 260px;\n            overflow-y: auto;\n        }\n\n        thead {\n            /* fallback */\n        }\n\n\n        tbody td, thead th {\n            width: 100%;\n            float: left;\n        }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
 	    ], UserInteractionPanel);
@@ -42571,7 +42639,7 @@
 	            selector: '[cell-row]',
 	            directives: [],
 	            template: "\n        <div class=\"text-center cell {{cell.position}}\" *ngFor=\"let cell of cells; let ij = index\" [class.cell-single-user]=\"cell.userIcons.length == 1\">\n            &nbsp; <i class=\"user-icon fa fa-2x {{icon}}\" *ngFor=\"let icon of cell.userIcons\"\n            ></i>\n        </div>\n    ",
-	            styles: ["\n        .cell { \n            height: 62px;\n            width: 62px;\n            float: left;\n         }\n        .user-icon {\n            color: black;\n        }\n        .cell-single-user {\n            padding-top: 15px;\n        }\n    "]
+	            styles: ["\n        .cell { \n            height: 55px;\n            width: 55px;\n            float: left;\n         }\n        .user-icon {\n            color: black;\n        }\n        .cell-single-user {\n            padding-top: 10px;\n        }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
 	    ], CellComponent);
@@ -42597,6 +42665,1400 @@
 
 /***/ },
 /* 315 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var router_1 = __webpack_require__(280);
+	var bootstrap_1 = __webpack_require__(316);
+	var angular2_modal_1 = __webpack_require__(317);
+	var gaming_engine_1 = __webpack_require__(304);
+	var WinningWindowData = (function (_super) {
+	    __extends(WinningWindowData, _super);
+	    function WinningWindowData(num1, num2) {
+	        _super.call(this);
+	        this.num1 = num1;
+	        this.num2 = num2;
+	    }
+	    return WinningWindowData;
+	}(bootstrap_1.BSModalContext));
+	exports.WinningWindowData = WinningWindowData;
+	/**
+	 * A Sample of how simple it is to create a new window, with its own injects.
+	 */
+	var WinnerModal = (function () {
+	    function WinnerModal(dialog, gameEngineService, parentRouter) {
+	        this.dialog = dialog;
+	        this.gameEngineService = gameEngineService;
+	        this.parentRouter = parentRouter;
+	        this.context = dialog.context;
+	    }
+	    WinnerModal.prototype.closeModal = function () {
+	        this.gameEngineService.resetGame();
+	        this.dialog.close();
+	        this.parentRouter.navigateByUrl('/home');
+	    };
+	    WinnerModal.prototype.beforeDismiss = function () {
+	        return true;
+	    };
+	    WinnerModal.prototype.beforeClose = function () {
+	        return true;
+	    };
+	    WinnerModal = __decorate([
+	        core_1.Component({
+	            selector: 'modal-content',
+	            styles: ["\n        .custom-modal-container {\n            padding: 15px;\n        }\n        .custom-modal-header {\n            background-color: #219161;\n            color: #fff;\n            -webkit-box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.75);\n            -moz-box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.75);\n            box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.75);\n            margin-top: -15px;\n            margin-bottom: 40px;\n        }\n        .modal-dialog {\n            width: 600px;\n            margin: 30px auto;\n        }\n        .modal-content {\n            background-color: transparent;\n            box-shadow: none;\n        }\n    "],
+	            //TODO: [ngClass] here on purpose, no real use, just to show how to workaround ng2 issue #4330.
+	            // Remove when solved.
+	            /* tslint:disable */
+	            template: "\n        <div class=\"modal-dialog modal-dialog-center\">\n            <div class=\"modal-content\">\n                <div class=\"modal-header\">\n                    <button type=\"button\" class=\"close\" (click)=\"closeModal()\">\u00D7</button>\n                    <span id=\"headerBlock\" class=\"modal-title\">\n                        <strong> And the winner{{gameEngineService.completedPlayers.length > 1 ? 's are' : 'is'}}: </strong>\n                    </span>\n                </div>\n                <div class=\"modal-body\">\n                    <div class=\"row\">\n                        <div class=\"col-md-1\">\n                        </div>\n                        <div class=\"col-md-10\">\n                            <table class=\"table\">\n                               <tbody>\n                                   <tr *ngFor=\"let user of gameEngineService.completedPlayers\">\n                                        <td><i class=\"fa fa-4 {{user.displayImage}}\"></i></td>\n                                        <td>{{user.username}}</td>\n                                        <td>{{gameEngineService.rank[user.rank]}}</td>\n                                   </tr>\n                               </tbody>\n                            </table>\n                        </div>\n                        <div class=\"col-md-1\">\n                        </div>\n                    </div>   \n                </div>\n                <div class=\"modal-footer\">\n                    <button class=\"btn btn-success\" (click)=\"closeModal()\">Close</button>   \n                </div>\n            </div>\n        </div>\n        "
+	        }), 
+	        __metadata('design:paramtypes', [angular2_modal_1.DialogRef, gaming_engine_1.GameEngineService, router_1.Router])
+	    ], WinnerModal);
+	    return WinnerModal;
+	}());
+	exports.WinnerModal = WinnerModal;
+	//# sourceMappingURL=winning-modal.component.js.map
+
+/***/ },
+/* 316 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var core_1 = __webpack_require__(7);
+	var angular2_modal_1 = __webpack_require__(317);
+	var modal_backdrop_1 = __webpack_require__(327);
+	var one_button_preset_1 = __webpack_require__(330);
+	var two_button_preset_1 = __webpack_require__(335);
+	var modal_1 = __webpack_require__(329);
+	var modal_context_1 = __webpack_require__(332);
+	exports.BSModalContext = modal_context_1.BSModalContext;
+	exports.BSModalContextBuilder = modal_context_1.BSModalContextBuilder;
+	var modal_backdrop_2 = __webpack_require__(327);
+	exports.BSModalBackdrop = modal_backdrop_2.BSModalBackdrop;
+	var modal_container_1 = __webpack_require__(328);
+	exports.BSModalContainer = modal_container_1.BSModalContainer;
+	var message_modal_1 = __webpack_require__(333);
+	exports.BSMessageModal = message_modal_1.BSMessageModal;
+	var modal_footer_1 = __webpack_require__(334);
+	exports.BSModalFooter = modal_footer_1.BSModalFooter;
+	var message_modal_preset_1 = __webpack_require__(331);
+	exports.MessageModalPresetBuilder = message_modal_preset_1.MessageModalPresetBuilder;
+	var modal_open_context_1 = __webpack_require__(326);
+	exports.ModalOpenContext = modal_open_context_1.ModalOpenContext;
+	exports.ModalOpenContextBuilder = modal_open_context_1.ModalOpenContextBuilder;
+	var one_button_preset_2 = __webpack_require__(330);
+	exports.OneButtonPresetBuilder = one_button_preset_2.OneButtonPresetBuilder;
+	var two_button_preset_2 = __webpack_require__(335);
+	exports.TwoButtonPresetBuilder = two_button_preset_2.TwoButtonPresetBuilder;
+	var modal_2 = __webpack_require__(329);
+	exports.Modal = modal_2.Modal;
+	exports.BS_MODAL_PROVIDERS = angular2_modal_1.MODAL_PROVIDERS.concat([
+	    core_1.provide(modal_1.Modal, { useClass: modal_1.Modal }),
+	    core_1.provide(angular2_modal_1.ModalBackdropComponent, { useValue: modal_backdrop_1.BSModalBackdrop }),
+	    core_1.provide(angular2_modal_1.ModalDropInFactory, { useValue: {
+	            alert: function (modal) { return new one_button_preset_1.OneButtonPresetBuilder(modal, { isBlocking: false }); },
+	            prompt: function (modal) { return new one_button_preset_1.OneButtonPresetBuilder(modal, { isBlocking: true, keyboard: null }); },
+	            confirm: function (modal) { return new two_button_preset_1.TwoButtonPresetBuilder(modal, { isBlocking: true, keyboard: null }); }
+	        } })
+	]);
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 317 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	var core_1 = __webpack_require__(7);
+	var tokens_1 = __webpack_require__(318);
+	var modal_1 = __webpack_require__(319);
+	var dom_modal_renderer_1 = __webpack_require__(322);
+	__export(__webpack_require__(323));
+	__export(__webpack_require__(318));
+	__export(__webpack_require__(321));
+	__export(__webpack_require__(324));
+	__export(__webpack_require__(326));
+	var modal_2 = __webpack_require__(319);
+	exports.Modal = modal_2.Modal;
+	var dom_modal_renderer_2 = __webpack_require__(322);
+	exports.DOMModalRenderer = dom_modal_renderer_2.DOMModalRenderer;
+	exports.MODAL_PROVIDERS = [
+	    new core_1.Provider(modal_1.Modal, { useClass: modal_1.Modal }),
+	    new core_1.Provider(tokens_1.ModalRenderer, { useClass: dom_modal_renderer_1.DOMModalRenderer })
+	];
+	//# sourceMappingURL=angular2-modal.js.map
+
+/***/ },
+/* 318 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var core_1 = __webpack_require__(7);
+	(function (DROP_IN_TYPE) {
+	    DROP_IN_TYPE[DROP_IN_TYPE["alert"] = 0] = "alert";
+	    DROP_IN_TYPE[DROP_IN_TYPE["prompt"] = 1] = "prompt";
+	    DROP_IN_TYPE[DROP_IN_TYPE["confirm"] = 2] = "confirm";
+	})(exports.DROP_IN_TYPE || (exports.DROP_IN_TYPE = {}));
+	var DROP_IN_TYPE = exports.DROP_IN_TYPE;
+	var ModalCompileConfig = (function () {
+	    function ModalCompileConfig(component, bindings) {
+	        this.component = component;
+	        this.bindings = bindings;
+	    }
+	    return ModalCompileConfig;
+	}());
+	exports.ModalCompileConfig = ModalCompileConfig;
+	var ModalRenderer = (function () {
+	    function ModalRenderer() {
+	    }
+	    return ModalRenderer;
+	}());
+	exports.ModalRenderer = ModalRenderer;
+	var ModalBackdropComponent = (function (_super) {
+	    __extends(ModalBackdropComponent, _super);
+	    function ModalBackdropComponent() {
+	        _super.apply(this, arguments);
+	    }
+	    return ModalBackdropComponent;
+	}(core_1.Type));
+	exports.ModalBackdropComponent = ModalBackdropComponent;
+	var ModalDropInFactory = (function () {
+	    function ModalDropInFactory() {
+	    }
+	    return ModalDropInFactory;
+	}());
+	exports.ModalDropInFactory = ModalDropInFactory;
+	//# sourceMappingURL=tokens.js.map
+
+/***/ },
+/* 319 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var __param = (this && this.__param) || function (paramIndex, decorator) {
+	    return function (target, key) { decorator(target, key, paramIndex); }
+	};
+	var core_1 = __webpack_require__(7);
+	var tokens_1 = __webpack_require__(318);
+	var dialog_ref_stack_1 = __webpack_require__(320);
+	var dialog_ref_1 = __webpack_require__(321);
+	var _stack = new dialog_ref_stack_1.DialogRefStack();
+	var unsupportedDropIn = function () { throw new Error('Unsupported Drop-in.'); };
+	var UnsupportedDropInFactory = {
+	    alert: unsupportedDropIn,
+	    prompt: unsupportedDropIn,
+	    confirm: unsupportedDropIn
+	};
+	function normalizeDropInFactory(dropInFactory) {
+	    if (!dropInFactory)
+	        return UnsupportedDropInFactory;
+	    return ['alert', 'prompt', 'confirm']
+	        .reduce(function (dif, key) {
+	        if (typeof dif[key] !== 'function')
+	            dif[key] = unsupportedDropIn;
+	        return dif;
+	    }, dropInFactory);
+	}
+	var Modal = (function () {
+	    function Modal(_modalRenderer, _backdrop, _dropIn) {
+	        this._modalRenderer = _modalRenderer;
+	        this._backdrop = _backdrop;
+	        this._dropIn = normalizeDropInFactory(_dropIn);
+	    }
+	    Modal.prototype.alert = function () {
+	        return this._dropIn.alert(this);
+	    };
+	    Modal.prototype.prompt = function () {
+	        return this._dropIn.prompt(this);
+	    };
+	    Modal.prototype.confirm = function () {
+	        return this._dropIn.confirm(this);
+	    };
+	    /**
+	     * Opens a modal window inside an existing component.
+	     * If
+	     * @param componentType The angular Component to render as the modal content.
+	     * @param bindings Resolved providers that will inject into the component provided.
+	     * @param context The context for the modal, attached to the dialog instance, DialogRef.context.
+	     *        Default: {}
+	     * @param viewContainer The element to block using the modal.
+	     *        Default: The value set in defaultViewContainer.
+	     * @param inside If true, render's the component inside the ViewContainerRef,
+	     *        otherwise render's the component in the root element (body in DOM)
+	     *        Default: true if ViewContainer supplied, false if not supplied.
+	     * @returns {Promise<DialogRef>}
+	     */
+	    Modal.prototype.open = function (componentType, context, bindings, viewContainer, inside) {
+	        if (context === void 0) { context = undefined; }
+	        if (bindings === void 0) { bindings = undefined; }
+	        if (viewContainer === void 0) { viewContainer = undefined; }
+	        inside = inside === undefined ? !!viewContainer : !!inside;
+	        if (!viewContainer) {
+	            if (!this.defaultViewContainer) {
+	                throw new Error('defaultViewContainer not set.');
+	            }
+	            viewContainer = this.defaultViewContainer;
+	        }
+	        if (context) {
+	            context.normalize();
+	        }
+	        var dialog = new dialog_ref_1.DialogRef(context || {});
+	        dialog.inElement = inside;
+	        var compileConfig = new tokens_1.ModalCompileConfig(componentType, bindings || []);
+	        var b = core_1.ReflectiveInjector.resolve([
+	            core_1.provide(Modal, { useValue: this }),
+	            core_1.provide(tokens_1.ModalRenderer, { useValue: this._modalRenderer }),
+	            core_1.provide(dialog_ref_1.DialogRef, { useValue: dialog }),
+	            core_1.provide(tokens_1.ModalCompileConfig, { useValue: compileConfig })
+	        ]);
+	        return this._modalRenderer.render(this._backdrop, viewContainer, b, dialog)
+	            .then(function (dialog) {
+	            _stack.pushManaged(dialog);
+	            return dialog;
+	        });
+	    };
+	    /**
+	     * Check if a given DialogRef is the top most ref in the stack.
+	     * TODO: distinguish between body modal vs in element modal.
+	     * @param dialogRef
+	     * @returns {boolean}
+	     */
+	    Modal.prototype.isTopMost = function (dialogRef) {
+	        return _stack.indexOf(dialogRef) === _stack.length - 1;
+	    };
+	    Modal.prototype.stackPosition = function (dialogRef) {
+	        return _stack.indexOf(dialogRef);
+	    };
+	    Object.defineProperty(Modal.prototype, "stackLength", {
+	        get: function () {
+	            return _stack.length;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Modal = __decorate([
+	        core_1.Injectable(),
+	        __param(2, core_1.Optional()), 
+	        __metadata('design:paramtypes', [tokens_1.ModalRenderer, tokens_1.ModalBackdropComponent, tokens_1.ModalDropInFactory])
+	    ], Modal);
+	    return Modal;
+	}());
+	exports.Modal = Modal;
+	//# sourceMappingURL=modal.js.map
+
+/***/ },
+/* 320 */
+/***/ function(module, exports) {
+
+	"use strict";
+	/**
+	 * A dumb stack implementation over an array.
+	 */
+	var DialogRefStack = (function () {
+	    function DialogRefStack() {
+	        this._stack = [];
+	    }
+	    DialogRefStack.prototype.push = function (dialogRef) {
+	        var idx = this._stack.indexOf(dialogRef);
+	        if (idx === -1)
+	            this._stack.push(dialogRef);
+	    };
+	    /**
+	     * Push a DialogRef into the stack and manage it so when it's done
+	     * it will automatically kick itself out of the stack.
+	     * @param dialogRef
+	     */
+	    DialogRefStack.prototype.pushManaged = function (dialogRef) {
+	        var _this = this;
+	        this.push(dialogRef);
+	        dialogRef.result
+	            .then(function () { return _this.remove(dialogRef); })
+	            .catch(function () { return _this.remove(dialogRef); });
+	        // we don't "pop" because we can't know for sure that our instance is the last.
+	        // In a user event world it will be the last, but since modals can close programmatically
+	        // we can't tell.
+	    };
+	    DialogRefStack.prototype.pop = function () {
+	        this._stack.pop();
+	    };
+	    /**
+	     * Remove a DialogRef from the stack.
+	     * @param dialogRef
+	     */
+	    DialogRefStack.prototype.remove = function (dialogRef) {
+	        var idx = this._stack.indexOf(dialogRef);
+	        if (idx > -1)
+	            this._stack.splice(idx, 1);
+	    };
+	    DialogRefStack.prototype.index = function (index) {
+	        return this._stack[index];
+	    };
+	    DialogRefStack.prototype.indexOf = function (dialogRef) {
+	        return this._stack.indexOf(dialogRef);
+	    };
+	    Object.defineProperty(DialogRefStack.prototype, "length", {
+	        get: function () {
+	            return this._stack.length;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return DialogRefStack;
+	}());
+	exports.DialogRefStack = DialogRefStack;
+	//# sourceMappingURL=dialog-ref-stack.js.map
+
+/***/ },
+/* 321 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var promise_1 = __webpack_require__(39);
+	/**
+	 * API to an open modal window.
+	 */
+	var DialogRef = (function () {
+	    function DialogRef(context) {
+	        this.context = context;
+	        this._resultDeferred = promise_1.PromiseWrapper.completer();
+	    }
+	    Object.defineProperty(DialogRef.prototype, "result", {
+	        /**
+	         * A Promise that is resolved on a close event and rejected on a dismiss event.
+	         * @returns {Promise<T>|any|*|Promise<any>}
+	         */
+	        get: function () {
+	            return this._resultDeferred.promise;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    /**
+	     *  Close the modal with a return value, i.e: result.
+	     */
+	    DialogRef.prototype.close = function (result) {
+	        if (result === void 0) { result = null; }
+	        if (this._fireHook('beforeClose') === true)
+	            return;
+	        this.destroy();
+	        this._resultDeferred.resolve(result);
+	    };
+	    /**
+	     *  Close the modal without a return value, i.e: cancelled.
+	     *  This call is automatically invoked when a user either:
+	     *  - Presses an exit keyboard key (if configured).
+	     *  - Clicks outside of the modal window (if configured).
+	     *  Usually, dismiss represent a Cancel button or a X button.
+	     */
+	    DialogRef.prototype.dismiss = function () {
+	        if (this._fireHook('beforeDismiss') === true)
+	            return;
+	        this.destroy();
+	        this._resultDeferred.reject();
+	    };
+	    DialogRef.prototype.destroy = function () { };
+	    DialogRef.prototype._fireHook = function (name) {
+	        var instance = this.contentRef && this.contentRef.instance, fn = instance && typeof instance[name] === 'function' && instance[name];
+	        if (fn) {
+	            return fn.call(instance);
+	        }
+	        else {
+	            return undefined;
+	        }
+	    };
+	    return DialogRef;
+	}());
+	exports.DialogRef = DialogRef;
+	//# sourceMappingURL=dialog-ref.js.map
+
+/***/ },
+/* 322 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var DOMModalRenderer = (function () {
+	    function DOMModalRenderer(_cr, _renderer) {
+	        this._cr = _cr;
+	        this._renderer = _renderer;
+	    }
+	    DOMModalRenderer.prototype.render = function (type, viewContainer, bindings, dialog) {
+	        var _this = this;
+	        return this._cr.resolveComponent(type)
+	            .then(function (cmpFactory) {
+	            var ctxInjector = viewContainer.parentInjector;
+	            var childInjector = Array.isArray(bindings) && bindings.length > 0 ?
+	                core_1.ReflectiveInjector.fromResolvedProviders(bindings, ctxInjector) : ctxInjector;
+	            return viewContainer.createComponent(cmpFactory, viewContainer.length, childInjector);
+	        })
+	            .then(function (cmpRef) {
+	            if (dialog.inElement) {
+	                _this._renderer.invokeElementMethod(viewContainer.element.nativeElement, 'appendChild', [cmpRef.hostView.rootNodes[0]]);
+	            }
+	            else {
+	                document.body.appendChild(cmpRef.hostView.rootNodes[0]);
+	            }
+	            dialog.destroy = function () { return cmpRef.destroy(); };
+	            return dialog;
+	        });
+	    };
+	    DOMModalRenderer = __decorate([
+	        core_1.Injectable(), 
+	        __metadata('design:paramtypes', [core_1.ComponentResolver, core_1.Renderer])
+	    ], DOMModalRenderer);
+	    return DOMModalRenderer;
+	}());
+	exports.DOMModalRenderer = DOMModalRenderer;
+	//# sourceMappingURL=dom-modal-renderer.js.map
+
+/***/ },
+/* 323 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var PRIVATE_PREFIX = '$$';
+	var RESERVED_REGEX = /^(\$\$).*/;
+	function validateMethodName(name) {
+	    if (!name) {
+	        throw new Error("Illegal method name. Empty method name is not allowed");
+	    }
+	    else if (name in this) {
+	        throw new Error("A member name '" + name + "' already defined.");
+	    }
+	}
+	/**
+	 * Returns a list of assigned property names (non private)
+	 * @param subject
+	 * @returns {string[]}
+	 */
+	function getAssignedPropertyNames(subject) {
+	    return Object.getOwnPropertyNames(subject)
+	        .filter(function (name) { return RESERVED_REGEX.test(name); })
+	        .map(function (name) { return name.substr(2); });
+	}
+	function privateKey(name) {
+	    return PRIVATE_PREFIX + name;
+	}
+	exports.privateKey = privateKey;
+	function objectDefinePropertyValue(obj, propertyName, value) {
+	    Object.defineProperty(obj, propertyName, {
+	        configurable: false,
+	        enumerable: false,
+	        writable: false,
+	        value: value
+	    });
+	}
+	/**
+	 * Given a FluentAssign instance, apply all of the supplied default values so calling
+	 * instance.toJSON will return those values (does not create a setter function)
+	 * @param instance
+	 * @param defaultValues
+	 */
+	function applyDefaultValues(instance, defaultValues) {
+	    Object.getOwnPropertyNames(defaultValues)
+	        .forEach(function (name) { return instance[privateKey(name)] = defaultValues[name]; });
+	}
+	/**
+	 * Create a function for setting a value for a property on a given object.
+	 * @param obj The object to apply the key & setter on.
+	 * @param propertyName The name of the property on the object
+	 * @param writeOnce If true will allow writing once (default: false)
+	 *
+	 * Example:
+	 * let obj = new FluentAssign<any>;
+	 * setAssignMethod(obj, 'myProp');
+	 * obj.myProp('someValue');
+	 * const result = obj.toJSON();
+	 * console.log(result); //{ myProp: 'someValue' }
+	 *
+	 *
+	 * let obj = new FluentAssign<any>;
+	 * setAssignMethod(obj, 'myProp', true); // applying writeOnce
+	 * obj.myProp('someValue');
+	 * obj.myProp('someValue'); // ERROR: Overriding config property 'myProp' is not allowed.
+	 */
+	function setAssignMethod(obj, propertyName, writeOnce) {
+	    var _this = this;
+	    if (writeOnce === void 0) { writeOnce = false; }
+	    validateMethodName.call(obj, propertyName);
+	    var key = privateKey(propertyName);
+	    objectDefinePropertyValue(obj, propertyName, function (value) {
+	        if (writeOnce && _this.hasOwnProperty(key)) {
+	            throw new Error("Overriding config property '" + propertyName + "' is not allowed.");
+	        }
+	        obj[key] = value;
+	        return obj;
+	    });
+	}
+	exports.setAssignMethod = setAssignMethod;
+	/**
+	 * Create a function for setting a value that is an alias to an other setter function.
+	 * @param obj The object to apply the key & setter on.
+	 * @param propertyName The name of the property on the object
+	 * @param srcPropertyName The name of the property on the object this alias points to
+	 * @param hard If true, will set a readonly property on the object that returns
+	 *        the value of the source property. Default: false
+	 *
+	 * Example:
+	 * let obj = new FluentAssign<any> ;
+	 * setAssignMethod(obj, 'myProp');
+	 * setAssignAlias(obj, 'myPropAlias', 'myProp');
+	 * obj.myPropAlias('someValue');
+	 * const result = obj.toJSON();
+	 * console.log(result); //{ myProp: 'someValue' }
+	 * result.myPropAlias // undefined
+	 *
+	 *
+	 * let obj = new FluentAssign<any> ;
+	 * setAssignMethod(obj, 'myProp');
+	 * setAssignAlias(obj, 'myPropAlias', 'myProp', true); // setting a hard alias.
+	 * obj.myPropAlias('someValue');
+	 * const result = obj.toJSON();
+	 * console.log(result); //{ myProp: 'someValue' }
+	 * result.myPropAlias // someValue
+	 */
+	function setAssignAlias(obj, propertyName, srcPropertyName, hard) {
+	    if (hard === void 0) { hard = false; }
+	    validateMethodName.call(obj, propertyName);
+	    objectDefinePropertyValue(obj, propertyName, function (value) {
+	        obj[srcPropertyName](value);
+	        return obj;
+	    });
+	    if (hard === true) {
+	        var key = privateKey(propertyName), srcKey_1 = privateKey(srcPropertyName);
+	        Object.defineProperty(obj, key, {
+	            configurable: false,
+	            enumerable: false,
+	            get: function () { return obj[srcKey_1]; }
+	        });
+	    }
+	}
+	exports.setAssignAlias = setAssignAlias;
+	/**
+	 * Represent a fluent API factory wrapper for defining FluentAssign instances.
+	 */
+	var FluentAssignFactory = (function () {
+	    function FluentAssignFactory(fluentAssign) {
+	        this._fluentAssign =
+	            fluentAssign instanceof FluentAssign ? fluentAssign : new FluentAssign();
+	    }
+	    /**
+	     * Create a setter method on the FluentAssign instance.
+	     * @param name The name of the setter function.
+	     * @param defaultValue If set (not undefined) set's the value on the instance immediately.
+	     * @returns {FluentAssignFactory}
+	     */
+	    FluentAssignFactory.prototype.setMethod = function (name, defaultValue) {
+	        if (defaultValue === void 0) { defaultValue = undefined; }
+	        setAssignMethod(this._fluentAssign, name);
+	        if (defaultValue !== undefined) {
+	            this._fluentAssign[name](defaultValue);
+	        }
+	        return this;
+	    };
+	    Object.defineProperty(FluentAssignFactory.prototype, "fluentAssign", {
+	        /**
+	         * The FluentAssign instance.
+	         * @returns {FluentAssign<T>}
+	         */
+	        get: function () {
+	            return this._fluentAssign;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return FluentAssignFactory;
+	}());
+	exports.FluentAssignFactory = FluentAssignFactory;
+	/**
+	 * Represent an object where every property is a function representing an assignment function.
+	 * Calling each function with a value will assign the value to the object and return the object.
+	 * Calling 'toJSON' returns an object with the same properties but this time representing the
+	 * assigned values.
+	 *
+	 * This allows setting an object in a fluent API manner.
+	 * Example:
+	 let fluent = new FluentAssign<any>(undefined, ['some', 'went']);
+	 fluent.some('thing').went('wrong').toJSON();
+	 // { some: 'thing', went: 'wrong' }
+	 */
+	var FluentAssign = (function () {
+	    /**
+	     *
+	     * @param defaultValues An object representing default values for the underlying object.
+	     * @param initialSetters A list of initial setters for this FluentAssign.
+	     * @param baseType the class/type to create a new base. optional, {} is used if not supplied.
+	     */
+	    function FluentAssign(defaultValues, initialSetters, baseType) {
+	        var _this = this;
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        if (initialSetters === void 0) { initialSetters = undefined; }
+	        if (baseType === void 0) { baseType = undefined; }
+	        if (Array.isArray(defaultValues)) {
+	            defaultValues.forEach(function (d) { return applyDefaultValues(_this, d); });
+	        }
+	        else if (defaultValues) {
+	            applyDefaultValues(this, defaultValues);
+	        }
+	        if (Array.isArray(initialSetters)) {
+	            initialSetters.forEach(function (name) { return setAssignMethod(_this, name); });
+	        }
+	        if (baseType) {
+	            this.__fluent$base__ = baseType;
+	        }
+	    }
+	    /**
+	     * Returns a FluentAssignFactory<FluentAssign<T>> ready to define a FluentAssign type.
+	     * @param defaultValues An object representing default values for the instance.
+	     * @param initialSetters A list of initial setters for the instance.
+	     * @returns {FluentAssignFactory<T>}
+	     */
+	    FluentAssign.compose = function (defaultValues, initialSetters) {
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        if (initialSetters === void 0) { initialSetters = undefined; }
+	        return FluentAssign.composeWith(new FluentAssign(defaultValues, initialSetters));
+	    };
+	    /**
+	     * Returns a FluentAssignFactory<Z> where Z is an instance of FluentAssign<?> or a derived
+	     * class of it.
+	     * @param fluentAssign An instance of FluentAssign<?> or a derived class of FluentAssign<?>.
+	     * @returns {any}
+	     */
+	    FluentAssign.composeWith = function (fluentAssign) {
+	        return new FluentAssignFactory(fluentAssign);
+	    };
+	    FluentAssign.prototype.toJSON = function () {
+	        var _this = this;
+	        return getAssignedPropertyNames(this)
+	            .reduce(function (obj, name) {
+	            var key = privateKey(name);
+	            // re-define property descriptors (we dont want their value)
+	            var propDesc = Object.getOwnPropertyDescriptor(_this, key);
+	            if (propDesc) {
+	                Object.defineProperty(obj, name, propDesc);
+	            }
+	            else {
+	                obj[name] = _this[key];
+	            }
+	            return obj;
+	        }, this.__fluent$base__ ? new this.__fluent$base__() : {});
+	    };
+	    return FluentAssign;
+	}());
+	exports.FluentAssign = FluentAssign;
+	//# sourceMappingURL=fluent-assign.js.map
+
+/***/ },
+/* 324 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var fluent_assign_1 = __webpack_require__(323);
+	var utils_1 = __webpack_require__(325);
+	exports.DEFAULT_VALUES = {
+	    isBlocking: true,
+	    keyboard: [27],
+	    supportsKey: function supportsKey(keyCode) {
+	        return this.keyboard.indexOf(keyCode) > -1;
+	    }
+	};
+	var DEFAULT_SETTERS = [
+	    'isBlocking',
+	    'keyboard',
+	    'message'
+	];
+	var ModalContext = (function () {
+	    function ModalContext() {
+	    }
+	    ModalContext.prototype.normalize = function () {
+	        if (this.isBlocking !== false)
+	            this.isBlocking = true;
+	        if (this.keyboard === null) {
+	            this.keyboard = [];
+	        }
+	        else if (typeof this.keyboard === 'number') {
+	            this.keyboard = [this.keyboard];
+	        }
+	        else if (!Array.isArray(this.keyboard)) {
+	            this.keyboard = exports.DEFAULT_VALUES.keyboard;
+	        }
+	    };
+	    return ModalContext;
+	}());
+	exports.ModalContext = ModalContext;
+	/**
+	 * A core context builder for a modal window instance, used to define the context upon
+	 * a modal choose it's behaviour.
+	 */
+	var ModalContextBuilder = (function (_super) {
+	    __extends(ModalContextBuilder, _super);
+	    function ModalContextBuilder(defaultValues, initialSetters, baseType) {
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        if (initialSetters === void 0) { initialSetters = undefined; }
+	        if (baseType === void 0) { baseType = undefined; }
+	        _super.call(this, utils_1.extend(exports.DEFAULT_VALUES, defaultValues || {}), utils_1.arrayUnion(DEFAULT_SETTERS, initialSetters || []), baseType);
+	    }
+	    ModalContextBuilder = __decorate([
+	        core_1.Injectable(), 
+	        __metadata('design:paramtypes', [Object, Array, Function])
+	    ], ModalContextBuilder);
+	    return ModalContextBuilder;
+	}(fluent_assign_1.FluentAssign));
+	exports.ModalContextBuilder = ModalContextBuilder;
+	//# sourceMappingURL=modal-context.js.map
+
+/***/ },
+/* 325 */
+/***/ function(module, exports) {
+
+	"use strict";
+	/**
+	 * Simple object extend
+	 * @param m1
+	 * @param m2
+	 * @returns {{}}
+	 */
+	function extend(m1, m2) {
+	    var m = {};
+	    for (var attr in m1) {
+	        if (m1.hasOwnProperty(attr)) {
+	            m[attr] = m1[attr];
+	        }
+	    }
+	    for (var attr in m2) {
+	        if (m2.hasOwnProperty(attr)) {
+	            m[attr] = m2[attr];
+	        }
+	    }
+	    return m;
+	}
+	exports.extend = extend;
+	/**
+	 * Simple, not optimized, array union of unique values.
+	 * @param arr1
+	 * @param arr2
+	 * @returns {T[]|any[]|any[][]|any[]}
+	 */
+	function arrayUnion(arr1, arr2) {
+	    return arr1
+	        .concat(arr2.filter(function (v) { return arr1.indexOf(v) === -1; }));
+	}
+	exports.arrayUnion = arrayUnion;
+	/**
+	 * Returns true if the config supports a given key.
+	 * @param key
+	 * @returns {boolean}
+	 */
+	function supportsKey(keyCode, config) {
+	    if (!Array.isArray(config))
+	        return config === null ? false : true;
+	    return config.indexOf(keyCode) > -1;
+	}
+	exports.supportsKey = supportsKey;
+	/**
+	 * Given an object representing a key/value map of css properties, returns a valid css string
+	 * representing the object.
+	 * Example:
+	 * console.log(toStyleString({
+	 *     position: 'absolute',
+	 *     width: '100%',
+	 *     height: '100%',
+	 *     top: '0',
+	 *     left: '0',
+	 *     right: '0',
+	 *     bottom: '0'
+	 * }));
+	 * // position:absolute;width:100%;height:100%;top:0;left:0;right:0;bottom:0
+	 * @param obj
+	 * @returns {string}
+	 */
+	function toStyleString(obj) {
+	    return Object.getOwnPropertyNames(obj)
+	        .map(function (k) { return (k + ":" + obj[k]); })
+	        .join(';');
+	    // let objStr = JSON.stringify(obj);
+	    // return objStr.substr(1, objStr.length - 2)
+	    //     .replace(/,/g, ';')
+	    //     .replace(/"/g, '');
+	}
+	exports.toStyleString = toStyleString;
+	//# sourceMappingURL=utils.js.map
+
+/***/ },
+/* 326 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var modal_1 = __webpack_require__(319);
+	var modal_context_1 = __webpack_require__(324);
+	var utils_1 = __webpack_require__(325);
+	var DEFAULT_SETTERS = [
+	    'component'
+	];
+	var ModalOpenContext = (function (_super) {
+	    __extends(ModalOpenContext, _super);
+	    function ModalOpenContext() {
+	        _super.apply(this, arguments);
+	    }
+	    return ModalOpenContext;
+	}(modal_context_1.ModalContext));
+	exports.ModalOpenContext = ModalOpenContext;
+	/**
+	 * A Modal Context that knows about the modal service, and so can open a modal window on demand.
+	 * Use the fluent API to configure the preset and then invoke the 'open' method to open a modal
+	 * based on the context.
+	 */
+	var ModalOpenContextBuilder = (function (_super) {
+	    __extends(ModalOpenContextBuilder, _super);
+	    function ModalOpenContextBuilder(defaultValues, initialSetters, baseType) {
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        if (initialSetters === void 0) { initialSetters = undefined; }
+	        if (baseType === void 0) { baseType = undefined; }
+	        _super.call(this, defaultValues || {}, utils_1.arrayUnion(DEFAULT_SETTERS, initialSetters || []), baseType);
+	    }
+	    /**
+	     * Hook to alter config and return bindings.
+	     * @param config
+	     */
+	    ModalOpenContextBuilder.prototype.$$beforeOpen = function (config) {
+	        return [];
+	    };
+	    /**
+	     * Open a modal window based on the configuration of this config instance.
+	     * @param viewContainer If set opens the modal inside the supplied viewContainer
+	     * @returns Promise<DialogRef>
+	     */
+	    ModalOpenContextBuilder.prototype.open = function (viewContainer) {
+	        var config = this.toJSON();
+	        if (!(config.modal instanceof modal_1.Modal)) {
+	            return Promise.reject(new Error('Configuration Error: modal service not set.'));
+	        }
+	        var bindings = typeof this.$$beforeOpen === 'function' && this.$$beforeOpen(config);
+	        return config.modal.open(config.component, config, bindings, viewContainer);
+	    };
+	    return ModalOpenContextBuilder;
+	}(modal_context_1.ModalContextBuilder));
+	exports.ModalOpenContextBuilder = ModalOpenContextBuilder;
+	//# sourceMappingURL=modal-open-context.js.map
+
+/***/ },
+/* 327 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var dialog_ref_1 = __webpack_require__(321);
+	var modal_container_1 = __webpack_require__(328);
+	var dialogRefCount = 0;
+	/**
+	 * Represents the modal backdrop.
+	 */
+	var BSModalBackdrop = (function () {
+	    function BSModalBackdrop(dialog) {
+	        this.hs = { ps: null, sz: null, pt: null };
+	        dialogRefCount++;
+	        document.body.classList.add('modal-open');
+	        if (dialog.inElement) {
+	            this.hs.ps = 'absolute';
+	            this.hs.sz = '100%';
+	            this.hs.pt = '0';
+	        }
+	    }
+	    BSModalBackdrop.prototype.ngOnDestroy = function () {
+	        if (--dialogRefCount === 0) {
+	            document.body.classList.remove('modal-open');
+	        }
+	    };
+	    BSModalBackdrop = __decorate([
+	        core_1.Component({
+	            selector: 'modal-backdrop',
+	            host: {
+	                '[style.position]': 'hs.ps',
+	                '[style.height]': 'hs.sz',
+	                '[style.width]': 'hs.sz',
+	                '[style.top]': 'hs.pt',
+	                '[style.left]': 'hs.pt',
+	                '[style.right]': 'hs.pt',
+	                '[style.bottom]': 'hs.pt'
+	            },
+	            directives: [modal_container_1.BSModalContainer],
+	            encapsulation: core_1.ViewEncapsulation.None,
+	            template: "<div [style.position]=\"hs.ps\" class=\"modal-backdrop fade in\"></div>\n<modal-container></modal-container>"
+	        }), 
+	        __metadata('design:paramtypes', [dialog_ref_1.DialogRef])
+	    ], BSModalBackdrop);
+	    return BSModalBackdrop;
+	}());
+	exports.BSModalBackdrop = BSModalBackdrop;
+	//# sourceMappingURL=modal-backdrop.js.map
+
+/***/ },
+/* 328 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var tokens_1 = __webpack_require__(318);
+	var dialog_ref_1 = __webpack_require__(321);
+	var modal_1 = __webpack_require__(329);
+	var utils_1 = __webpack_require__(325);
+	/**
+	 * A component that acts as a top level container for an open modal window.
+	 */
+	var BSModalContainer = (function () {
+	    function BSModalContainer(dialog, _compileConfig, _modal, _cr) {
+	        this.dialog = dialog;
+	        this._compileConfig = _compileConfig;
+	        this._modal = _modal;
+	        this._cr = _cr;
+	        if (!dialog.inElement) {
+	            this.position = null;
+	        }
+	        else {
+	            this.position = 'absolute';
+	        }
+	    }
+	    BSModalContainer.prototype.ngAfterViewInit = function () {
+	        var _this = this;
+	        this._cr.resolveComponent(this._compileConfig.component)
+	            .then(function (cmpFactory) {
+	            var vcr = _this._viewContainer, bindings = _this._compileConfig.bindings, ctxInjector = vcr.parentInjector;
+	            var childInjector = Array.isArray(bindings) && bindings.length > 0 ?
+	                core_1.ReflectiveInjector.fromResolvedProviders(bindings, ctxInjector) : ctxInjector;
+	            return _this.dialog.contentRef =
+	                vcr.createComponent(cmpFactory, vcr.length, childInjector);
+	        });
+	    };
+	    BSModalContainer.prototype.onClickOutside = function () {
+	        return this._modal.isTopMost(this.dialog) &&
+	            !this.dialog.context.isBlocking &&
+	            this.dialog.dismiss();
+	    };
+	    BSModalContainer.prototype.documentKeypress = function (event) {
+	        // check that this modal is the last in the stack.
+	        if (!this._modal.isTopMost(this.dialog))
+	            return;
+	        if (utils_1.supportsKey(event.keyCode, this.dialog.context.keyboard)) {
+	            this.dialog.dismiss();
+	        }
+	    };
+	    __decorate([
+	        core_1.ViewChild('modalDialog', { read: core_1.ViewContainerRef }), 
+	        __metadata('design:type', core_1.ViewContainerRef)
+	    ], BSModalContainer.prototype, "_viewContainer", void 0);
+	    BSModalContainer = __decorate([
+	        core_1.Component({
+	            selector: 'modal-container',
+	            host: {
+	                'tabindex': '-1',
+	                'role': 'dialog',
+	                'class': 'in modal',
+	                'style': 'display: block',
+	                '[style.position]': 'position',
+	                '(body:keydown)': 'documentKeypress($event)'
+	            },
+	            encapsulation: core_1.ViewEncapsulation.None,
+	            /* tslint:disable */
+	            template: "<div [ngClass]=\"dialog.context.dialogClass\"\n          [class.modal-lg]=\"dialog.context.size == 'lg'\"\n          [class.modal-sm]=\"dialog.context.size == 'sm'\">\n         <div class=\"modal-content\"              \n              style=\"display:block\"              \n              role=\"document\"\n              (clickOutside)=\"onClickOutside()\">\n            <div style=\"display: none\" #modalDialog></div>\n         </div>\n    </div>"
+	        }), 
+	        __metadata('design:paramtypes', [dialog_ref_1.DialogRef, tokens_1.ModalCompileConfig, modal_1.Modal, core_1.ComponentResolver])
+	    ], BSModalContainer);
+	    return BSModalContainer;
+	}());
+	exports.BSModalContainer = BSModalContainer;
+	//# sourceMappingURL=modal-container.js.map
+
+/***/ },
+/* 329 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var modal_1 = __webpack_require__(319);
+	exports.Modal = modal_1.Modal;
+	//# sourceMappingURL=modal.js.map
+
+/***/ },
+/* 330 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var message_modal_preset_1 = __webpack_require__(331);
+	var utils_1 = __webpack_require__(325);
+	/**
+	 * A Preset for a classic 1 button modal window.
+	 */
+	var OneButtonPresetBuilder = (function (_super) {
+	    __extends(OneButtonPresetBuilder, _super);
+	    function OneButtonPresetBuilder(modal, defaultValues) {
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        _super.call(this, utils_1.extend({
+	            modal: modal,
+	            okBtn: 'OK',
+	            okBtnClass: 'btn btn-primary'
+	        }, defaultValues || {}), [
+	            'okBtn',
+	            'okBtnClass'
+	        ]);
+	    }
+	    OneButtonPresetBuilder.prototype.$$beforeOpen = function (config) {
+	        this.addButton(config.okBtnClass, config.okBtn, function (cmp, $event) { return cmp.dialog.close(true); });
+	        return _super.prototype.$$beforeOpen.call(this, config);
+	    };
+	    return OneButtonPresetBuilder;
+	}(message_modal_preset_1.MessageModalPresetBuilder));
+	exports.OneButtonPresetBuilder = OneButtonPresetBuilder;
+	//# sourceMappingURL=one-button-preset.js.map
+
+/***/ },
+/* 331 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var fluent_assign_1 = __webpack_require__(323);
+	var modal_context_1 = __webpack_require__(332);
+	var message_modal_1 = __webpack_require__(333);
+	var utils_1 = __webpack_require__(325);
+	var DEFAULT_VALUES = {
+	    component: message_modal_1.BSMessageModal,
+	    headerClass: 'modal-header',
+	    bodyClass: 'modal-body',
+	    footerClass: 'modal-footer'
+	};
+	var DEFAULT_SETTERS = [
+	    'headerClass',
+	    'title',
+	    'titleHtml',
+	    'bodyClass',
+	    'footerClass'
+	];
+	/**
+	 * A Preset representing the configuration needed to open MessageModal.
+	 * This is an abstract implementation with no concrete behaviour.
+	 * Use derived implementation.
+	 */
+	var MessageModalPresetBuilder = (function (_super) {
+	    __extends(MessageModalPresetBuilder, _super);
+	    function MessageModalPresetBuilder(defaultValues, initialSetters, baseType) {
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        if (initialSetters === void 0) { initialSetters = undefined; }
+	        if (baseType === void 0) { baseType = undefined; }
+	        _super.call(this, utils_1.extend(utils_1.extend({ buttons: [] }, DEFAULT_VALUES), defaultValues || {}), utils_1.arrayUnion(DEFAULT_SETTERS, initialSetters || []), baseType);
+	        fluent_assign_1.setAssignAlias(this, 'body', 'message', true);
+	    }
+	    MessageModalPresetBuilder.prototype.addButton = function (css, caption, onClick) {
+	        var btn = {
+	            cssClass: css,
+	            caption: caption,
+	            onClick: onClick
+	        };
+	        var key = fluent_assign_1.privateKey('buttons');
+	        this[key].push(btn);
+	        return this;
+	    };
+	    return MessageModalPresetBuilder;
+	}(modal_context_1.BSModalContextBuilder));
+	exports.MessageModalPresetBuilder = MessageModalPresetBuilder;
+	//# sourceMappingURL=message-modal-preset.js.map
+
+/***/ },
+/* 332 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var modal_open_context_1 = __webpack_require__(326);
+	var utils_1 = __webpack_require__(325);
+	var DEFAULT_VALUES = {
+	    dialogClass: 'modal-dialog',
+	    showClose: false
+	};
+	var DEFAULT_SETTERS = [
+	    'dialogClass',
+	    'size',
+	    'showClose'
+	];
+	var BSModalContext = (function (_super) {
+	    __extends(BSModalContext, _super);
+	    function BSModalContext() {
+	        _super.apply(this, arguments);
+	    }
+	    BSModalContext.prototype.normalize = function () {
+	        if (!this.dialogClass) {
+	            this.dialogClass = DEFAULT_VALUES.dialogClass;
+	        }
+	        _super.prototype.normalize.call(this);
+	    };
+	    return BSModalContext;
+	}(modal_open_context_1.ModalOpenContext));
+	exports.BSModalContext = BSModalContext;
+	var BSModalContextBuilder = (function (_super) {
+	    __extends(BSModalContextBuilder, _super);
+	    function BSModalContextBuilder(defaultValues, initialSetters, baseType) {
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        if (initialSetters === void 0) { initialSetters = undefined; }
+	        if (baseType === void 0) { baseType = undefined; }
+	        _super.call(this, utils_1.extend(DEFAULT_VALUES, defaultValues || {}), utils_1.arrayUnion(DEFAULT_SETTERS, initialSetters || []), baseType || BSModalContext // https://github.com/Microsoft/TypeScript/issues/7234
+	        );
+	    }
+	    return BSModalContextBuilder;
+	}(modal_open_context_1.ModalOpenContextBuilder));
+	exports.BSModalContextBuilder = BSModalContextBuilder;
+	//# sourceMappingURL=modal-context.js.map
+
+/***/ },
+/* 333 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var dialog_ref_1 = __webpack_require__(321);
+	var modal_footer_1 = __webpack_require__(334);
+	/**
+	 * A Component representing a generic bootstrap modal content element.
+	 *
+	 * By configuring a MessageModalContext instance you can:
+	 *
+	 *  Header:
+	 *      - Set header container class (default: modal-header)
+	 *      - Set title text (enclosed in H3 element)
+	 *      - Set title html (overrides text)
+	 *
+	 *  Body:
+	 *      - Set body container class.  (default: modal-body)
+	 *      - Set body container HTML.
+	 *
+	 *  Footer:
+	 *      - Set footer class.  (default: modal-footer)
+	 *      - Set button configuration (from 0 to n)
+	 */
+	var BSMessageModal = (function () {
+	    function BSMessageModal(dialog) {
+	        this.dialog = dialog;
+	        this.context = dialog.context;
+	    }
+	    BSMessageModal.prototype.onFooterButtonClick = function ($event) {
+	        $event.btn.onClick(this, $event.$event);
+	    };
+	    Object.defineProperty(BSMessageModal.prototype, "titleHtml", {
+	        get: function () {
+	            return this.context.titleHtml ? 1 : 0;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    BSMessageModal = __decorate([
+	        core_1.Component({
+	            selector: 'modal-content',
+	            directives: [modal_footer_1.BSModalFooter],
+	            encapsulation: core_1.ViewEncapsulation.None,
+	            template: "<div [ngClass]=\"context.headerClass\" [ngSwitch]=\"titleHtml\">\n        <button *ngIf=\"context.showClose\" type=\"button\" class=\"close\" \n                aria-label=\"Close\" (click)=\"dialog.dismiss()\">\n            <span aria-hidden=\"true\">\u00D7</span>\n        </button>\n        <div *ngSwitchWhen=\"1\" [innerHtml]=\"context.titleHtml\"></div>\n        <h3 *ngSwitchDefault class=\"modal-title\">{{context.title}}</h3>\n    </div>\n    <div [ngClass]=\"context.bodyClass\" [innerHtml]=\"context.message\"></div>\n    <modal-footer [footerClass]=\"context.footerClass\" \n                  [buttons]=\"context.buttons\"\n                  (onButtonClick)=\"onFooterButtonClick($event)\"></modal-footer>"
+	        }), 
+	        __metadata('design:paramtypes', [dialog_ref_1.DialogRef])
+	    ], BSMessageModal);
+	    return BSMessageModal;
+	}());
+	exports.BSMessageModal = BSMessageModal;
+	//# sourceMappingURL=message-modal.js.map
+
+/***/ },
+/* 334 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	/**
+	 * Represents the modal footer for storing buttons.
+	 */
+	var BSModalFooter = (function () {
+	    function BSModalFooter() {
+	        /**
+	         * Emitted when a button was clicked
+	         * @type {EventEmitter<FooterButtonClickEvent>}
+	         */
+	        this.onButtonClick = new core_1.EventEmitter();
+	    }
+	    BSModalFooter.prototype.onClick = function (btn, $event) {
+	        this.onButtonClick.emit({ btn: btn, $event: $event });
+	    };
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', String)
+	    ], BSModalFooter.prototype, "footerClass", void 0);
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Array)
+	    ], BSModalFooter.prototype, "buttons", void 0);
+	    __decorate([
+	        core_1.Output(), 
+	        __metadata('design:type', Object)
+	    ], BSModalFooter.prototype, "onButtonClick", void 0);
+	    BSModalFooter = __decorate([
+	        core_1.Component({
+	            selector: 'modal-footer',
+	            encapsulation: core_1.ViewEncapsulation.None,
+	            template: "<div [ngClass]=\"footerClass\">\n    <button *ngFor=\"let btn of buttons;\"\n            [ngClass]=\"btn.cssClass\"\n            (click)=\"onClick(btn, $event)\">{{btn.caption}}</button>\n</div>"
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], BSModalFooter);
+	    return BSModalFooter;
+	}());
+	exports.BSModalFooter = BSModalFooter;
+	//# sourceMappingURL=modal-footer.js.map
+
+/***/ },
+/* 335 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var utils_1 = __webpack_require__(325);
+	var message_modal_preset_1 = __webpack_require__(331);
+	/**
+	 * A Preset for a classic 2 button modal window.
+	 */
+	var TwoButtonPresetBuilder = (function (_super) {
+	    __extends(TwoButtonPresetBuilder, _super);
+	    function TwoButtonPresetBuilder(modal, defaultValues) {
+	        if (defaultValues === void 0) { defaultValues = undefined; }
+	        _super.call(this, utils_1.extend({
+	            modal: modal,
+	            okBtn: 'OK',
+	            okBtnClass: 'btn btn-primary',
+	            cancelBtn: 'Cancel',
+	            cancelBtnClass: 'btn btn-default'
+	        }, defaultValues || {}), [
+	            'okBtn',
+	            'okBtnClass',
+	            'cancelBtn',
+	            'cancelBtnClass'
+	        ]);
+	    }
+	    TwoButtonPresetBuilder.prototype.$$beforeOpen = function (config) {
+	        this.addButton(config.okBtnClass, config.okBtn, function (cmp, $event) { return cmp.dialog.close(true); })
+	            .addButton(config.cancelBtnClass, config.cancelBtn, function (cmp, $event) { return cmp.dialog.dismiss(); });
+	        return _super.prototype.$$beforeOpen.call(this, config);
+	    };
+	    return TwoButtonPresetBuilder;
+	}(message_modal_preset_1.MessageModalPresetBuilder));
+	exports.TwoButtonPresetBuilder = TwoButtonPresetBuilder;
+	//# sourceMappingURL=two-button-preset.js.map
+
+/***/ },
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42627,7 +44089,7 @@
 	//# sourceMappingURL=about.component.js.map
 
 /***/ },
-/* 316 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42656,6 +44118,154 @@
 	}());
 	exports.Rules = Rules;
 	//# sourceMappingURL=rules.js.map
+
+/***/ },
+/* 338 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var Credit = (function () {
+	    function Credit() {
+	    }
+	    Credit = __decorate([
+	        core_1.Component({
+	            selector: "credit",
+	            templateUrl: '/templates/credit.html'
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], Credit);
+	    return Credit;
+	}());
+	exports.Credit = Credit;
+	//# sourceMappingURL=credit.component.js.map
+
+/***/ },
+/* 339 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var core_1 = __webpack_require__(7);
+	var platform_browser_1 = __webpack_require__(176);
+	var outside_event_plugin_1 = __webpack_require__(340);
+	var outside_event_plugin_2 = __webpack_require__(340);
+	exports.DOMOutsideEventPlugin = outside_event_plugin_2.DOMOutsideEventPlugin;
+	exports.MODAL_BROWSER_PROVIDERS = [
+	    core_1.provide(platform_browser_1.EVENT_MANAGER_PLUGINS, { multi: true, useClass: outside_event_plugin_1.DOMOutsideEventPlugin })
+	];
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+/* 340 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// heavily inspired by:
+	// http://www.bennadel.com/blog/3025-creating-custom-dom-and-host-event-bindings-in-angular-2-beta-6.htm
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var platform_browser_1 = __webpack_require__(176);
+	var dom_adapter_1 = __webpack_require__(250);
+	var lang_1 = __webpack_require__(10);
+	var eventMap = {
+	    clickOutside: 'click',
+	    mousedownOutside: 'mousedown',
+	    mouseupOutside: 'mouseup',
+	    mousemoveOutside: 'mousemove'
+	};
+	/**
+	 * An event handler factory for event handlers that bubble the event to a given handler
+	 * if the event target is not an ancestor of the given element.
+	 * @param element
+	 * @param handler
+	 * @returns {function(any): undefined}
+	 */
+	function bubbleNonAncestorHandlerFactory(element, handler) {
+	    return function (event) {
+	        var current = event.target;
+	        do {
+	            if (current === element) {
+	                return;
+	            }
+	        } while (current.parentNode && (current = current.parentNode));
+	        handler(event);
+	    };
+	}
+	var DOMOutsideEventPlugin = (function (_super) {
+	    __extends(DOMOutsideEventPlugin, _super);
+	    function DOMOutsideEventPlugin() {
+	        _super.call(this);
+	        this._DOM = dom_adapter_1.getDOM();
+	    }
+	    DOMOutsideEventPlugin.prototype.supports = function (eventName) {
+	        return eventMap.hasOwnProperty(eventName);
+	    };
+	    DOMOutsideEventPlugin.prototype.addEventListener = function (element, eventName, handler) {
+	        var _this = this;
+	        var zone = this.manager.getZone();
+	        // A Factory that registers the event on the document, instead of the element.
+	        // the handler is created at runtime, and it acts as a propagation/bubble predicate, it will
+	        // bubble up the event (i.e: execute our original event handler) only if the event targer
+	        // is an ancestor of our element.
+	        // The event is fired inside the angular zone so change detection can kick into action.
+	        var onceOnOutside = function () { return _this._DOM.onAndCancel(_this._DOM.getGlobalEventTarget('document'), eventMap[eventName], bubbleNonAncestorHandlerFactory(element, function (evt) { return zone.runGuarded(function () { return handler(evt); }); })); };
+	        // we run the event registration for the document in a different zone, this will make sure
+	        // change detection is off.
+	        // It turns out that if a component that use DOMOutsideEventPlugin is built from a click
+	        // event, we might get here before the event reached the document, causing a quick false
+	        // positive handling (when stopPropagation() was'nt invoked). To workaround this we wait
+	        // for the next vm turn and register.
+	        // Event registration returns a dispose function for that event, angular use it to clean
+	        // up after component get's destroyed. Since we need to return a dispose function
+	        // synchronously we have to put a wrapper for it since we will get it asynchronously,
+	        // i.e: after we need to return it.
+	        //
+	        return zone.runOutsideAngular(function () {
+	            var fn;
+	            setTimeout(function () { return fn = onceOnOutside(); }, 0);
+	            return function () { return fn(); };
+	        });
+	    };
+	    DOMOutsideEventPlugin.prototype.addGlobalEventListener = function (target, eventName, handler) {
+	        var _this = this;
+	        if ((target === 'document') || (target === 'window')) {
+	            return lang_1.noop;
+	        }
+	        else {
+	            var element_1 = this._DOM.getGlobalEventTarget(target), zone_1 = this.manager.getZone();
+	            return this.manager.getZone().runOutsideAngular(function () { return _this._DOM.onAndCancel(element_1, eventName, function (evt) { return zone_1.runGuarded(function () { return handler(evt); }); }); });
+	        }
+	    };
+	    DOMOutsideEventPlugin = __decorate([
+	        core_1.Injectable(), 
+	        __metadata('design:paramtypes', [])
+	    ], DOMOutsideEventPlugin);
+	    return DOMOutsideEventPlugin;
+	}(platform_browser_1.DomEventsPlugin));
+	exports.DOMOutsideEventPlugin = DOMOutsideEventPlugin;
+	//# sourceMappingURL=outside-event-plugin.js.map
 
 /***/ }
 /******/ ]);
