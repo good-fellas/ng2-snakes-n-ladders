@@ -13,6 +13,12 @@ import {ROUTER_DIRECTIVES} from '@angular/router';
            pointer-events: none;
            cursor: not-allowed; 
         }
+        .info-box {
+            height: 85px;
+        }
+        .player-box {
+            height: 290px;
+        }
     `]
 })
 
