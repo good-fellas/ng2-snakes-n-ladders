@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {Component, Output, EventEmitter} from '@angular/core'
 import {GameEngineService} from "../services/gaming-engine";
 import set = Reflect.set;
 
@@ -82,6 +82,7 @@ import set = Reflect.set;
 })
 
 export class UserInteractionPanel{
+    @Output('game-finished') gameFinished = new EventEmitter();
     randomNumber:number;
     hideRollingDice:boolean;
     hideDiceResult:boolean;
@@ -104,6 +105,9 @@ export class UserInteractionPanel{
             this.hideDiceResult = false;
             this.setDiceResultImagePath(this.randomNumber);
             this.gameEngineService.completeUserTurn(this.randomNumber);
+            if(this.gameEngineService.players.length < 2) {
+                this.gameFinished.emit("finished");
+            }
         },
         1000)
     }
