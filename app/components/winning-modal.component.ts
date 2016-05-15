@@ -46,7 +46,7 @@ export class WinningWindowData extends BSModalContext {
                 <div class="modal-header">
                     <button type="button" class="close" (click)="closeModal()">×</button>
                     <span id="headerBlock" class="modal-title">
-                        <strong> And the winner are: </strong>
+                        <strong> And the winner{{gameEngineService.completedPlayers.length > 1 ? 's are' : 'is'}}: </strong>
                     </span>
                 </div>
                 <div class="modal-body">
