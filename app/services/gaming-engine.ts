@@ -4,13 +4,16 @@ import {User} from "../model/user";
 
 @Injectable()
 export class GameEngineService{
-
+    
     players = new Array();
+    completedPlayers = new Array();
     currentPlayerIndex:number=0;
     currentPlayer:User = this.players[this.currentPlayerIndex];
     messages = new Array();
     cells = new Array();
     userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
+
+    rank = {1: "Winner", 2: "First Runner-up", 3: "Second Runner-up"};
 
     advancersList = [
         new Advancer("snake", 99,80),
@@ -63,6 +66,25 @@ export class GameEngineService{
 
     completeUserTurn(rolledValue:number) {
         let nextCellIndex  = this.getNextCellIndex(rolledValue);
+        this.updateCellState(nextCellIndex);
+        this.updateCurrentUserState(nextCellIndex);
+        this.currentPlayer = this.getNextPlayer(rolledValue);
+    }
+
+    updateCurrentUserState(nextCellIndex:number) {
+        this.currentPlayer.currentCellIndex = nextCellIndex;
+        if (nextCellIndex === 100) {
+            this.players = this.players.filter((player:User) => {
+                return player.username !== this.currentPlayer.username;
+            });
+            this.currentPlayer.rank = this.completedPlayers.length + 1;
+            this.completedPlayers.push(this.currentPlayer);
+            this.currentPlayer = this.players[0];
+            this.currentPlayerIndex = 0;
+        }
+    }
+
+    updateCellState(nextCellIndex:number) {
         let cell = this.cells[this.currentPlayer.currentCellIndex];
         if(cell) {
             var index = cell.userIcons.indexOf(this.currentPlayer.displayImage);    // <-- Not supported in <IE9
@@ -70,11 +92,8 @@ export class GameEngineService{
                 cell.userIcons.splice(index, 1);
             }
         }
-        console.log(cell);
-        this.currentPlayer.currentCellIndex = nextCellIndex;
         let nextCell = this.cells[nextCellIndex];
         nextCell.userIcons.push(this.currentPlayer.displayImage);
-        this.currentPlayer = this.getNextPlayer(rolledValue);
     }
 
     getNextCellIndex(rolledValue: number) {
@@ -113,6 +132,14 @@ export class GameEngineService{
             'userIcon': user.displayImage,
             'text': message
         });
+    }
+
+    resetGame() {
+        this.players = new Array();
+        this.completedPlayers = new Array();
+        this.currentPlayerIndex=0;
+        this.currentPlayer = null;
+        this.messages = new Array();
     }
 
 }

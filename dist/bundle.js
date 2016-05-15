@@ -42072,6 +42072,7 @@
 	var gaming_engine_1 = __webpack_require__(304);
 	var game_panel_1 = __webpack_require__(310);
 	var about_component_1 = __webpack_require__(315);
+	var rules_1 = __webpack_require__(316);
 	var AppComponent = (function () {
 	    function AppComponent(gameEngineService) {
 	        this.gameEngineService = gameEngineService;
@@ -42087,6 +42088,7 @@
 	            { path: '/home', component: home_component_ts_1.HomeComponent },
 	            { path: '/about', component: about_component_1.AboutComponent },
 	            { path: '/board', component: game_panel_1.GamePanel },
+	            { path: '/rules', component: rules_1.Rules },
 	            { path: '/', component: home_component_ts_1.HomeComponent }
 	        ]), 
 	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
@@ -42160,6 +42162,7 @@
 	        this.players = new Array();
 	        this.currentPlayerIndex = 0;
 	        this.currentPlayer = this.players[this.currentPlayerIndex];
+	        this.messages = new Array();
 	        this.cells = new Array();
 	        this.userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
 	        this.advancersList = [
@@ -42185,6 +42188,7 @@
 	            new advancer_1.Advancer("ladder", 78, 98),
 	            new advancer_1.Advancer("ladder", 87, 94)
 	        ];
+	        this.advancerMsg = { 'ladder': 'Hurray!! you found ladder.', 'snake': 'oops!!! you stepped on snake.' };
 	        this.isSnakeAdvancer = function (advancer) {
 	            return advancer.type == "snake";
 	        };
@@ -42205,7 +42209,6 @@
 	        return this.advancersList.filter(this.isLadderAdvancer);
 	    };
 	    GameEngineService.prototype.completeUserTurn = function (rolledValue) {
-	        this.message = null;
 	        var nextCellIndex = this.getNextCellIndex(rolledValue);
 	        var cell = this.cells[this.currentPlayer.currentCellIndex];
 	        if (cell) {
@@ -42223,26 +42226,38 @@
 	    GameEngineService.prototype.getNextCellIndex = function (rolledValue) {
 	        var nextCellIndex = this.currentPlayer.currentCellIndex + rolledValue;
 	        if (nextCellIndex > 100) {
-	            this.message = "Cannot move " + rolledValue + " step(s). Max. allowed step: " + (100 - this.currentPlayer.currentCellIndex);
+	            this.addMessageLog(this.currentPlayer, this.currentPlayer.username + " cannot move " + rolledValue + " step(s). Max. allowed step: " + (100 - this.currentPlayer.currentCellIndex));
 	            nextCellIndex = this.currentPlayer.currentCellIndex;
 	        }
 	        var advancer = this.advancersList.find(function (element) {
 	            return element.initialCellIndex === nextCellIndex;
 	        });
-	        return advancer ? advancer.finalCellIndex : nextCellIndex;
+	        var advMsg = '';
+	        if (advancer) {
+	            nextCellIndex = advancer.finalCellIndex;
+	            advMsg = this.advancerMsg[advancer.type];
+	        }
+	        this.addMessageLog(this.currentPlayer, advMsg + this.currentPlayer.username + ' moved to ' + nextCellIndex + '.');
+	        return nextCellIndex;
 	    };
 	    GameEngineService.prototype.getNextPlayer = function (rolledValue) {
 	        var nextPlayer;
 	        if (rolledValue === 6) {
 	            nextPlayer = this.currentPlayer;
-	            this.message = "Congratulation " + this.currentPlayer.username + "! You got another turn...";
+	            this.addMessageLog(this.currentPlayer, "Congratulation " + this.currentPlayer.username + "! You got another turn...");
 	        }
 	        else {
 	            this.currentPlayerIndex = (this.players.length - 1 === this.currentPlayerIndex) ? 0 : (this.currentPlayerIndex + 1);
-	            console.log("Current player index in end: ", this.currentPlayerIndex, this.players);
 	            nextPlayer = this.players[this.currentPlayerIndex];
 	        }
 	        return nextPlayer;
+	    };
+	    GameEngineService.prototype.addMessageLog = function (user, message) {
+	        console.log(this.messages);
+	        this.messages.unshift({
+	            'userIcon': user.displayImage,
+	            'text': message
+	        });
 	    };
 	    GameEngineService = __decorate([
 	        core_1.Injectable(), 
@@ -42308,7 +42323,7 @@
 	        core_1.Component({
 	            selector: 'nav-bar',
 	            directives: [router_1.ROUTER_DIRECTIVES],
-	            template: "\n        <nav class=\"navbar navbar-default navbar-fixed-top\">\n                <div class=\"container\">\n                    <!-- Brand and toggle get grouped for better mobile display -->\n                    <div class=\"navbar-header page-scroll\">\n                        <a class=\"navbar-brand page-scroll\" href=\"#page-top\">Snake and Ladder</a>\n                    </div>\n        \n                    <!-- Collect the nav links, forms, and other content for toggling -->\n                    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                        <ul class=\"nav navbar-nav navbar-right\">\n                            <li [ngClass]=\"{'active': (menu == 'home')}\" (click)=\"menu = 'home'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/home']\">Home</a>\n                            </li>\n                            <li (click)=\"menu = 'about'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/about']\">Team</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <!-- /.navbar-collapse -->\n                </div>\n                <!-- /.container-fluid -->\n            </nav>\n\n    "
+	            template: "\n        <nav class=\"navbar navbar-default navbar-fixed-top\">\n                <div class=\"container\">\n                    <!-- Brand and toggle get grouped for better mobile display -->\n                    <div class=\"navbar-header page-scroll\">\n                        <a class=\"navbar-brand page-scroll\" href=\"#page-top\">Snake and Ladder</a>\n                    </div>\n        \n                    <!-- Collect the nav links, forms, and other content for toggling -->\n                    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                        <ul class=\"nav navbar-nav navbar-right\">\n                            <li [ngClass]=\"{'active': (menu == 'home')}\" (click)=\"menu = 'home'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/home']\">Home</a>\n                            </li>\n                            <li (click)=\"menu = 'rules'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/rules']\">Rules</a>\n                            </li>\n                            <li (click)=\"menu = 'about'\">\n                                <a class=\"page-scroll\" [routerLink]=\"['/about']\">Team</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <!-- /.navbar-collapse -->\n                </div>\n                <!-- /.container-fluid -->\n            </nav>\n\n    "
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], NavBarComponent);
@@ -42407,7 +42422,7 @@
 	        core_1.Component({
 	            selector: 'game-panel',
 	            directives: [board_component_1.BoardComponent, user_interaction_panel_1.UserInteractionPanel, ladder_advancer_list_1.LadderAdvancerList, snake_advancers_list_1.SnakeAdvancerList],
-	            template: "\n <div class=\"container\"  style=\"padding-top:110px\">\n    <div class=\"intro-text\">\n        <div class=\"row\"> \n            <div class=\"col-md-9\" style=\"width: 736px; height: 736px;\">\n                <board></board>\n            </div>\n            <div class=\"col-md-3\">\n                <user-interaction-panel></user-interaction-panel>\n            </div>\n        </div>\n    </div>\n </div>\n    "
+	            template: "\n <div class=\"container\"  style=\"padding-top:110px\">\n    <div class=\"intro-text\">\n        <div class=\"row\"> \n            <div class=\"col-md-9\" style=\"width: 650px; height: 650px;\">\n                <board></board>\n            </div>\n            <div class=\"col-md-3\">\n                <user-interaction-panel></user-interaction-panel>\n            </div>\n        </div>\n    </div>\n </div>\n    "
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], GamePanel);
@@ -42469,7 +42484,8 @@
 	    UserInteractionPanel = __decorate([
 	        core_1.Component({
 	            selector: 'user-interaction-panel',
-	            template: "\n        <div class=\"panel panel-default\">\n            <div class=\"panel-heading\">\n                <strong>Current Player:</strong> <span class=\"fa {{gameEngineService.currentPlayer.displayImage}}\"></span> {{gameEngineService.currentPlayer.username}}\n            </div>\n            <div class=\"panel-body\">\n                <div class=\"row\">\n                    <div class=\"col-lg-12\" style=\"height:70px\">\n                        <img [hidden]=\"hideRollingDice\"\n                            src=\"../../assets/images/rolling-dice.gif\" />        \n                \n                        <img [hidden]=\"hideDiceResult\" height=\"50px\" style=\"padding-left:5px;padding-top:5px\"\n                            src=\"{{diceResultImagePath}}\" />\n                    </div>\n                    <div class=\"col-lg-12\">\n                        <button class=\"btn btn-success\" (click)=\"rollButtonClickHandler()\">Roll</button>        \n                    </div>\n                </div>\n            </div>\n            <div class=\"col-lg-12\">\n                <span *ngIf=\"gameEngineService.message\" class=\"well\">{{gameEngineService.message}}</span>\n            </div>\n            \n        </div>\n    "
+	            template: "\n        <div class=\"panel panel-default\">\n            <div class=\"panel-heading\">\n                <span class=\"fa {{gameEngineService.currentPlayer.displayImage}}\"></span> <strong>{{gameEngineService.currentPlayer.username}}'s</strong> Turn\n            </div>\n            <div class=\"panel-body\">\n                <div class=\"row\">\n                    <div class=\"col-lg-12\" style=\"height:70px\">\n                        <img [hidden]=\"hideRollingDice\"\n                            src=\"../../assets/images/rolling-dice.gif\" />        \n                \n                        <img [hidden]=\"hideDiceResult\" height=\"50px\" style=\"padding-left:5px;padding-top:5px\"\n                            src=\"{{diceResultImagePath}}\" />\n                    </div>\n                    <div class=\"col-lg-12\">\n                        <button class=\"btn btn-success\" (click)=\"rollButtonClickHandler()\">Roll</button>        \n                    </div>\n                </div>\n            </div>\n        </div>\n        <div class=\"panel panel-default\">\n            <div class=\"panel-heading\">\n                <strong>Logs</strong>\n            </div>\n            <div class=\"panel-body\">\n                <div class=\"row log\" *ngFor=\"let info of gameEngineService.messages\">\n                    <i class=\"fa {{info.userIcon}}\"></i> {{info.text}}\n                </div>\n            </div>\n            \n        </div>\n    ",
+	            styles: ["\n        .log {\n            border-bottom: 1px dashed #ccc;\n        }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
 	    ], UserInteractionPanel);
@@ -42554,8 +42570,8 @@
 	        core_1.Component({
 	            selector: '[cell-row]',
 	            directives: [],
-	            template: "\n        <div class=\"cell {{cell.position}}\" *ngFor=\"let cell of cells; let ij = index\" >\n            &nbsp; <i class=\"user-icon fa {{icon}}\" *ngFor=\"let icon of cell.userIcons\"></i>\n        </div>\n    ",
-	            styles: ["\n        .cell { \n            height: 70px;\n            width: 70px;\n            float: left;\n         }\n        .user-icon {\n            font-size: 200%;\n            color: black;\n            background-color: white;\n        }\n    "]
+	            template: "\n        <div class=\"text-center cell {{cell.position}}\" *ngFor=\"let cell of cells; let ij = index\" [class.cell-single-user]=\"cell.userIcons.length == 1\">\n            &nbsp; <i class=\"user-icon fa fa-2x {{icon}}\" *ngFor=\"let icon of cell.userIcons\"\n            ></i>\n        </div>\n    ",
+	            styles: ["\n        .cell { \n            height: 62px;\n            width: 62px;\n            float: left;\n         }\n        .user-icon {\n            color: black;\n        }\n        .cell-single-user {\n            padding-top: 15px;\n        }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [gaming_engine_1.GameEngineService])
 	    ], CellComponent);
@@ -42609,6 +42625,37 @@
 	}());
 	exports.AboutComponent = AboutComponent;
 	//# sourceMappingURL=about.component.js.map
+
+/***/ },
+/* 316 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(7);
+	var Rules = (function () {
+	    function Rules() {
+	    }
+	    Rules = __decorate([
+	        core_1.Component({
+	            selector: 'rules',
+	            directives: [],
+	            templateUrl: '/templates/rules.html',
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], Rules);
+	    return Rules;
+	}());
+	exports.Rules = Rules;
+	//# sourceMappingURL=rules.js.map
 
 /***/ }
 /******/ ]);
