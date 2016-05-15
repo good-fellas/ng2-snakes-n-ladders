@@ -6,29 +6,33 @@ import {GameEngineService} from "../services/gaming-engine";
     selector: '[cell-row]',
     directives: [],
     template: `
-        <div class="cell {{cell.position}}" *ngFor="let cell of cells; let ij = index" >
-            &nbsp; <i class="user-icon fa {{icon}}" *ngFor="let icon of cell.userIcons"></i>
+        <div class="text-center cell {{cell.position}}" *ngFor="let cell of cells; let ij = index" [class.cell-single-user]="cell.userIcons.length == 1">
+            &nbsp; <i class="user-icon fa fa-2x {{icon}}" *ngFor="let icon of cell.userIcons"
+            ></i>
         </div>
     `,
     styles: [`
         .cell { 
-            height: 70px;
-            width: 70px;
+            height: 62px;
+            width: 62px;
             float: left;
          }
         .user-icon {
-            font-size: 200%;
             color: black;
-            background-color: white;
+        }
+        .cell-single-user {
+            padding-top: 15px;
         }
     `]
 })
 export class CellComponent {
     cells = new Array();
+
     @Input('curent-row-count') curentRowCount: number;
     constructor(public gameEngineService:GameEngineService){
 
     }
+
     ngAfterViewInit() {
         for (var index = 0; index < 10; index++) {
             let cellIndex = (this.curentRowCount % 2 == 0) ? index : (9 - index);
