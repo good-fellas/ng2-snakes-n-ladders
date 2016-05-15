@@ -20,3 +20,13 @@ header{
 #intro-text{
     padding-top:50px;
 }
+.modal-content {
+    background-color: transparent;
+    box-shadow: none;
+}
+.modal-dialog{
+    background-color: white;
+}
+.modal-header{
+    background-color: #FEC503;
+}

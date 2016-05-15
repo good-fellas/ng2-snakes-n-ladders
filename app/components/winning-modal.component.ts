@@ -45,14 +45,26 @@ export class WinningWindowData extends BSModalContext {
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" (click)="closeModal()">×</button>
-                    <h4 id="headerBlock" class="modal-title">And the winner are:</h4>
+                    <span id="headerBlock" class="modal-title">
+                        <strong> And the winner are: </strong>
+                    </span>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div *ngFor="let user of gameEngineService.completedPlayers">
-                            <i class="fa fa-4 {{user.displayImage}}"></i>
-                            {{user.username}}
-                            {{gameEngineService.rank[user.rank]}}
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-10">
+                            <table class="table">
+                               <tbody>
+                                   <tr *ngFor="let user of gameEngineService.completedPlayers">
+                                        <td><i class="fa fa-4 {{user.displayImage}}"></i></td>
+                                        <td>{{user.username}}</td>
+                                        <td>{{gameEngineService.rank[user.rank]}}</td>
+                                   </tr>
+                               </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-1">
                         </div>
                     </div>   
                 </div>
@@ -77,6 +89,10 @@ export class WinnerModal implements ModalComponent<WinningWindowData> {
     }
 
     beforeDismiss(): boolean {
+        return true;
+    }
+
+    beforeClose(): boolean{
         return true;
     }
 }
