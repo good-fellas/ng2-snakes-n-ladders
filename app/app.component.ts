@@ -7,6 +7,7 @@ import {LadderAdvancerList} from "./components/ladder-advancer-list";
 import {GameEngineService} from "./services/gaming-engine";
 import {GamePanel} from "./components/game-panel";
 import {AboutComponent} from "./components/about.component";
+import {Rules} from "./components/rules";
 
 @Component({
     selector: 'my-app',
@@ -21,6 +22,7 @@ import {AboutComponent} from "./components/about.component";
     {path: '/home', component: HomeComponent},
     {path: '/about', component: AboutComponent},
     {path: '/board', component: GamePanel},
+    {path: '/rules', component: Rules},
     {path: '/', component: HomeComponent}
 ])
 export class AppComponent {

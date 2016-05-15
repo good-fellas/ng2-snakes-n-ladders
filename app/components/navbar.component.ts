@@ -18,6 +18,9 @@ import {ROUTER_DIRECTIVES, Routes} from '@angular/router';
                             <li [ngClass]="{'active': (menu == 'home')}" (click)="menu = 'home'">
                                 <a class="page-scroll" [routerLink]="['/home']">Home</a>
                             </li>
+                            <li (click)="menu = 'rules'">
+                                <a class="page-scroll" [routerLink]="['/rules']">Rules</a>
+                            </li>
                             <li (click)="menu = 'about'">
                                 <a class="page-scroll" [routerLink]="['/about']">Team</a>
                             </li>
