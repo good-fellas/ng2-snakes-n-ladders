@@ -13,15 +13,15 @@ import {GameEngineService} from "../services/gaming-engine";
     `,
     styles: [`
         .cell { 
-            height: 62px;
-            width: 62px;
+            height: 55px;
+            width: 55px;
             float: left;
          }
         .user-icon {
             color: black;
         }
         .cell-single-user {
-            padding-top: 15px;
+            padding-top: 10px;
         }
     `]
 })

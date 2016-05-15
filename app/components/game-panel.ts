@@ -11,10 +11,10 @@ import { Modal,BS_MODAL_PROVIDERS} from 'angular2-modal/plugins/bootstrap';
     viewProviders: [ ...BS_MODAL_PROVIDERS ],
     directives: [BoardComponent, UserInteractionPanel, LadderAdvancerList, SnakeAdvancerList, WinnerModal],
     template: `
- <div class="container"  style="padding-top:110px">
+ <div class="container"  style="padding-top:80px">
     <div class="intro-text">
         <div class="row"> 
-            <div class="col-md-8" style="width: 650px; height: 650px;">
+            <div class="col-md-8" style="width: 580px; height: 580px;">
                 <board></board>
             </div>
             <div class="col-md-4">

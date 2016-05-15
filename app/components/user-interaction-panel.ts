@@ -65,7 +65,7 @@ import set = Reflect.set;
         }
 
         tbody {
-            height: 328px;
+            height: 260px;
             overflow-y: auto;
         }
 
