@@ -34,7 +34,7 @@ import set = Reflect.set;
                 <table class="table table-hover">
                     <tbody>
                         <tr *ngFor="let info of gameEngineService.messages">
-                            <td><i class="fa {{info.userIcon}}"></i> {{info.text}}</td>
+                            <td><i class="fa {{info.userIcon}}"></i> <strong>{{info.username}}</strong> : {{info.text}}</td>
                         </tr>
                     </tbody>
                 </table>
