@@ -7,7 +7,7 @@ import {GameEngineService} from "../services/gaming-engine";
     directives: [],
     template: `
         <div class="col-lg-1 cell {{cell.position}}" *ngFor="let cell of cells; let ij = index" >
-            &nbsp; 
+            &nbsp; <i class="user-icon fa {{icon}}" *ngFor="let icon of cell.userIcons"></i>
         </div>
     `,
     styles: [`
@@ -16,6 +16,11 @@ import {GameEngineService} from "../services/gaming-engine";
             height: 65px;
             width: 65px;
          }
+        .user-icon {
+            font-size: 200%;
+            color: black;
+            background-color: white;
+        }
     `]
 })
 export class CellComponent {

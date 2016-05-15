@@ -55,17 +55,23 @@ export class GameEngineService{
     }
 
     completeUserTurn(rolledValue:number) {
-        this.message="";
+        console.log("Current player in begining: ",this.currentPlayer);
+        this.message=null;
         let nextCellIndex  = this.getNextCellIndex(rolledValue);
         let cell = this.cells[this.currentPlayer.currentCellIndex];
-        var index = cell.userIcons.indexOf(this.currentPlayer.displayImage);    // <-- Not supported in <IE9
-        if (index !== -1) {
-            cell.userIcons.splice(index, 1);
+        if(cell) {
+            var index = cell.userIcons.indexOf(this.currentPlayer.displayImage);    // <-- Not supported in <IE9
+            if (index !== -1) {
+                cell.userIcons.splice(index, 1);
+            }
         }
+        console.log(nextCellIndex);
         this.currentPlayer.currentCellIndex = nextCellIndex;
         let nextCell = this.cells[nextCellIndex];
+        console.log(nextCell, this.cells);
         this.currentPlayer = this.getNextPlayer(rolledValue);
         nextCell.userIcons.push(this.currentPlayer.displayImage);
+        console.log("Current player in end: ",this.currentPlayer);
     }
 
     getNextCellIndex(rolledValue: number) {
@@ -77,14 +83,17 @@ export class GameEngineService{
     }
 
     getNextPlayer(rolledValue: number):User {
+        console.log("Current player index in begining: ",this.currentPlayerIndex);
         let nextPlayer:User;
         if (rolledValue === 6) {
             nextPlayer = this.currentPlayer;
             this.message = "Congratulation "+this.currentPlayer.username+"! You got another turn..."
         } else {
             this.currentPlayerIndex = (this.players.length - 1 === this.currentPlayerIndex) ? 0 : (this.currentPlayerIndex +1);
+            console.log("Current player index in end: ",this.currentPlayerIndex, this.players);
             nextPlayer = this.players[this.currentPlayerIndex];
         }
+        console.log("Current player index in end: ",this.currentPlayerIndex);
         return nextPlayer;
     }
 

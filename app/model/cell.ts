@@ -3,5 +3,6 @@ export class Cell {
     userIcons: string[];
     constructor(position: number){
         this.position = position;
+        this.userIcons = new Array();
     }
 }

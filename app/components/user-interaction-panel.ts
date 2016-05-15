@@ -7,7 +7,7 @@ import set = Reflect.set;
     template: `
         <div class="row">
             <div class="col-lg-12">
-                <h4>Manish kapoor</h4>        
+                <h4>{{gameEngineService.currentPlayer.username}}'s turn</h4>        
             </div>
             <div class="col-lg-12">
                 #{{hideRollingDice}}#
@@ -26,7 +26,7 @@ import set = Reflect.set;
                 {{randomNumber}}        
             </div>
             <div class="col-lg-12">
-                Current Player : {{gameEngineService.currentPlayer.username}}        
+                <span *ngIf="gameEngineService.message" class="well">{{gameEngineService.message}}</span>
             </div>
             
         </div>
@@ -51,10 +51,11 @@ export class UserInteractionPanel{
         this.hideRollingDice = false;
         this.hideDiceResult = true;
         setTimeout(() => {
-                this.setRandomNumber();
-                this.hideRollingDice = true;
-                this.hideDiceResult = false;
-                this.setDiceResultImagePath(this.randomNumber)
+            this.setRandomNumber();
+            this.hideRollingDice = true;
+            this.hideDiceResult = false;
+            this.setDiceResultImagePath(this.randomNumber);
+            this.gameEngineService.completeUserTurn(this.randomNumber);
         },
         1000)
     }
