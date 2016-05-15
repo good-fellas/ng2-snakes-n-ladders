@@ -5,7 +5,7 @@ import {User} from "../model/user";
 @Injectable()
 export class GameEngineService{
 
-    players = [new User('Test User')];
+    players = new Array();//[new User('Test User')];
     currentPlayer = this.players[0];
 
     addPlayer(player:User){
