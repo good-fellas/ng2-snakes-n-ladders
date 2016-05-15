@@ -19,6 +19,9 @@ import {ROUTER_DIRECTIVES} from '@angular/router';
         .player-box {
             height: 290px;
         }
+        .rule-box {
+            height: 290px;
+        }
     `]
 })
 
