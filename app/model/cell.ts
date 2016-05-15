@@ -1,5 +1,6 @@
 export class Cell {
-    position:number
+    position:number;
+    userIcons: string[];
     constructor(position: number){
         this.position = position;
     }
