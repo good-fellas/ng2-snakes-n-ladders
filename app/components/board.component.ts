@@ -21,7 +21,6 @@ import {CellComponent} from "./cell.component";
             margin-left: 0px;
         }
     `]
-
 })
 export class BoardComponent {
     cells = new Array();
