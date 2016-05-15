@@ -6,18 +6,18 @@ import set = Reflect.set;
     selector: 'user-interaction-panel',
     template: `
         <div class="row">
-            <div class="col-lg-12">
-                <h4>{{gameEngineService.currentPlayer.username}}</h4>        
+            <div class="col-lg-12 text-center margin-bottom-10">
+                <h4>Player: {{gameEngineService.currentPlayer.username}}</h4>        
             </div>
-            <div class="col-lg-12" style="height:70px">
+            <div class="col-lg-12 text-center margin-bottom-10" style="height:70px">
                 <img [hidden]="hideRollingDice"
                 src="../../assets/images/rolling-dice.gif" />        
                 
-                <img [hidden]="hideDiceResult" height="50px" style="padding-left:5px;padding-top:5px"
+                <img [hidden]="hideDiceResult" height="65px" style="padding-left:5px;padding-top:5px"
                 src="{{diceResultImagePath}}" />
                 
             </div>
-            <div class="col-lg-12">
+            <div class="col-lg-12 text-center">
                 <button class="btn btn-success" (click)="rollButtonClickHandler()">Roll</button>        
                 <!--<button (click)="getRandomNumber()">Roll</button>        -->
             </div>
