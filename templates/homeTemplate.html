@@ -67,11 +67,11 @@
                         </div>
                         <div class="col-lg-4">
                             <ul class="list-group">
-                                <li class="list-group-item text-center">
+                                <li class="list-group-item text-center" *ngIf="gameEngineService.players.length > 0">
                                    <strong>Player Names</strong>
                                 </li>
                                 <li class="list-group-item" *ngFor="let player of gameEngineService.players">
-                                    {{player.username}}
+                                    <span class="fa {{player.displayImage}}"></span> {{player.username}}
                                 </li>
                             </ul>
                         </div>
