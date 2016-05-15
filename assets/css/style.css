@@ -1,3 +1,9 @@
 .margin-bottom-10{
     margin-bottom: 10px;
 }
+.panel-default > .panel-heading{
+    background-color: #FEC503;
+}
+#rules-wrapper-div{
+    background-color: #0f0f0f;
+}
