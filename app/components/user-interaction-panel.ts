@@ -7,7 +7,7 @@ import set = Reflect.set;
     template: `
         <div class="panel panel-default">
             <div class="panel-heading">
-                <strong>Current Player:</strong> <span class="fa {{gameEngineService.currentPlayer.displayImage}}"></span> {{gameEngineService.currentPlayer.username}}
+                <span class="fa {{gameEngineService.currentPlayer.displayImage}}"></span> <strong>{{gameEngineService.currentPlayer.username}}'s</strong> Turn
             </div>
             <div class="panel-body">
                 <div class="row">
@@ -23,12 +23,24 @@ import set = Reflect.set;
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12">
-                <span *ngIf="gameEngineService.message" class="well">{{gameEngineService.message}}</span>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Logs</strong>
+            </div>
+            <div class="panel-body">
+                <div class="row log" *ngFor="let info of gameEngineService.messages">
+                    <i class="fa {{info.userIcon}}"></i> {{info.text}}
+                </div>
             </div>
             
         </div>
-    `
+    `,
+    styles: [`
+        .log {
+            border-bottom: 1px dashed #ccc;
+        }
+    `]
 })
 
 export class UserInteractionPanel{

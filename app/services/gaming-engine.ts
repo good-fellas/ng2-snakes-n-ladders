@@ -8,7 +8,7 @@ export class GameEngineService{
     players = new Array();
     currentPlayerIndex:number=0;
     currentPlayer:User = this.players[this.currentPlayerIndex];
-    message:string;
+    messages = new Array();
     cells = new Array();
     userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
 
@@ -36,6 +36,8 @@ export class GameEngineService{
         new Advancer("ladder",87, 94)
     ];
 
+    advancerMsg = {'ladder': 'Hurray!! you found ladder.', 'snake': 'oops!!! you stepped on snake.'};
+
     addPlayer(player:User) {
         player.displayImage = this.userIcons[this.players.length];
         this.players.push(player);
@@ -60,7 +62,6 @@ export class GameEngineService{
     }
 
     completeUserTurn(rolledValue:number) {
-        this.message=null;
         let nextCellIndex  = this.getNextCellIndex(rolledValue);
         let cell = this.cells[this.currentPlayer.currentCellIndex];
         if(cell) {
@@ -79,26 +80,39 @@ export class GameEngineService{
     getNextCellIndex(rolledValue: number) {
         let nextCellIndex  = this.currentPlayer.currentCellIndex + rolledValue;
         if(nextCellIndex > 100) {
-            this.message = "Cannot move " +rolledValue+ " step(s). Max. allowed step: " + (100 - this.currentPlayer.currentCellIndex);
-            nextCellIndex  =this.currentPlayer.currentCellIndex;
+            this.addMessageLog(this.currentPlayer, this.currentPlayer.username +" cannot move " +rolledValue+ " step(s). Max. allowed step: " + (100 - this.currentPlayer.currentCellIndex));
+            nextCellIndex  = this.currentPlayer.currentCellIndex;
         }
         let advancer = this.advancersList.find(function (element) {
            return  element.initialCellIndex === nextCellIndex;
         });
-        return advancer ? advancer.finalCellIndex : nextCellIndex;
+        var advMsg = '';
+        if(advancer) {
+            nextCellIndex = advancer.finalCellIndex;
+            advMsg = this.advancerMsg[advancer.type];
+        }
+        this.addMessageLog(this.currentPlayer, advMsg + this.currentPlayer.username + ' moved to '+ nextCellIndex + '.');
+        return nextCellIndex;
     }
 
     getNextPlayer(rolledValue: number):User {
         let nextPlayer:User;
         if (rolledValue === 6) {
             nextPlayer = this.currentPlayer;
-            this.message = "Congratulation "+this.currentPlayer.username+"! You got another turn..."
+            this.addMessageLog(this.currentPlayer, "Congratulation "+this.currentPlayer.username+"! You got another turn...");
         } else {
             this.currentPlayerIndex = (this.players.length - 1 === this.currentPlayerIndex) ? 0 : (this.currentPlayerIndex +1);
-            console.log("Current player index in end: ",this.currentPlayerIndex, this.players);
             nextPlayer = this.players[this.currentPlayerIndex];
         }
         return nextPlayer;
+    }
+
+    addMessageLog(user:User, message:string) {
+        console.log(this.messages);
+        this.messages.unshift({
+            'userIcon': user.displayImage,
+            'text': message
+        });
     }
 
 }
