@@ -8,17 +8,10 @@ import {BoardComponent} from "./board.component";
     selector: 'game-panel',
     directives: [BoardComponent, UserInteractionPanel, LadderAdvancerList, SnakeAdvancerList],
     template: `
- <div class="container" style="padding-top:110px">
+ <div class="container"  style="padding-top:110px">
     <div class="intro-text">
-        <div class="row">
-            <div class="col-md-1">
-                <snake-advancers-list></snake-advancers-list>
-            </div>
-            <div class="col-md-1">
-                <ladder-advancers-list></ladder-advancers-list>
-            </div>
-            
-            <div class="col-md-7">
+        <div class="row"> 
+            <div class="col-md-9" style="width: 736px; height: 736px;">
                 <board></board>
             </div>
             <div class="col-md-3">
@@ -27,7 +20,7 @@ import {BoardComponent} from "./board.component";
         </div>
     </div>
  </div>
-`
+    `
 })
 export class GamePanel{
 

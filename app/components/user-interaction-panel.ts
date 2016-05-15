@@ -5,22 +5,28 @@ import set = Reflect.set;
 @Component({
     selector: 'user-interaction-panel',
     template: `
-        <div class="row">
-            <div class="col-lg-12 text-center margin-bottom-10">
-                <h4>Player: {{gameEngineService.currentPlayer.username}}</h4>        
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <strong>Current Player:</strong> <span class="fa {{gameEngineService.currentPlayer.displayImage}}"></span> {{gameEngineService.currentPlayer.username}}
             </div>
-            <div class="col-lg-12 text-center margin-bottom-10" style="height:70px">
-                <img [hidden]="hideRollingDice"
-                src="../../assets/images/rolling-dice.gif" />        
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-12" style="height:70px">
+                        <img [hidden]="hideRollingDice"
+                            src="../../assets/images/rolling-dice.gif" />        
                 
-                <img [hidden]="hideDiceResult" height="65px" style="padding-left:5px;padding-top:5px"
-                src="{{diceResultImagePath}}" />
-                
+                        <img [hidden]="hideDiceResult" height="50px" style="padding-left:5px;padding-top:5px"
+                            src="{{diceResultImagePath}}" />
+                    </div>
+                    <div class="col-lg-12">
+                        <button class="btn btn-success" (click)="rollButtonClickHandler()">Roll</button>        
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-12 text-center">
-                <button class="btn btn-success" (click)="rollButtonClickHandler()">Roll</button>        
-                <!--<button (click)="getRandomNumber()">Roll</button>        -->
+            <div class="col-lg-12">
+                <span *ngIf="gameEngineService.message" class="well">{{gameEngineService.message}}</span>
             </div>
+            
         </div>
     `
 })
@@ -43,10 +49,11 @@ export class UserInteractionPanel{
         this.hideRollingDice = false;
         this.hideDiceResult = true;
         setTimeout(() => {
-                this.setRandomNumber();
-                this.hideRollingDice = true;
-                this.hideDiceResult = false;
-                this.setDiceResultImagePath(this.randomNumber)
+            this.setRandomNumber();
+            this.hideRollingDice = true;
+            this.hideDiceResult = false;
+            this.setDiceResultImagePath(this.randomNumber);
+            this.gameEngineService.completeUserTurn(this.randomNumber);
         },
         1000)
     }
