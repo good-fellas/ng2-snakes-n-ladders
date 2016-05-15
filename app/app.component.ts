@@ -20,6 +20,7 @@ import {AboutComponent} from "./components/about.component";
 @Routes([
     {path: '/home', component: HomeComponent},
     {path: '/about', component: AboutComponent},
+    {path: '/board', component: GamePanel},
     {path: '/', component: HomeComponent}
 ])
 export class AppComponent {
