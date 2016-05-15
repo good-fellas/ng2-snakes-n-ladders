@@ -8,6 +8,7 @@ import {GameEngineService} from "./services/gaming-engine";
 import {GamePanel} from "./components/game-panel";
 import {AboutComponent} from "./components/about.component";
 import {Rules} from "./components/rules";
+import {Credit} from "./components/credit.component";
 
 @Component({
     selector: 'my-app',
@@ -23,6 +24,7 @@ import {Rules} from "./components/rules";
     {path: '/about', component: AboutComponent},
     {path: '/board', component: GamePanel},
     {path: '/rules', component: Rules},
+    {path: '/credit', component: Credit},
     {path: '/', component: HomeComponent}
 ])
 export class AppComponent {
