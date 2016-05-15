@@ -44,7 +44,9 @@ export class GameEngineService{
     advancerMsg = {'ladder': 'Hurray!! you found ladder.', 'snake': 'oops!!! you stepped on snake.'};
 
     addPlayer(player:User) {
-        player.displayImage = this.userIcons[this.players.length];
+        let randomValue = this.getRandomInt(1,this.userIcons.length);
+        player.displayImage = this.userIcons[randomValue];
+        this.userIcons.splice(randomValue,1);
         this.players.push(player);
         this.currentPlayer = player;
         this.currentPlayerIndex = this.players.length - 1;
@@ -142,6 +144,11 @@ export class GameEngineService{
         this.currentPlayerIndex=0;
         this.currentPlayer = null;
         this.messages = new Array();
+        this.userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
+    }
+
+    getRandomInt(min:number, max:number):number {
+        return Math.floor(Math.random() * (max - min)) + min;
     }
 
 }
