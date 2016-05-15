@@ -2,4 +2,3 @@ src/app/**/*.js
 src/app/**/*.js.map
 app/**/*.js
 app/**/*.js.map
-dist
