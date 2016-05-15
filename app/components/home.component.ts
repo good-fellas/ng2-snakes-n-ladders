@@ -13,6 +13,12 @@ import {ROUTER_DIRECTIVES} from '@angular/router';
            pointer-events: none;
            cursor: not-allowed; 
         }
+        .info-box {
+            height: 85px;
+        }
+        .player-box {
+            height: 290px;
+        }
     `]
 })
 
@@ -21,9 +27,11 @@ export class HomeComponent {
     playerName:string;
     
     addPlayer():void{
-        let player = new User(this.playerName);
-        this.gameEngineService.addPlayer(player);
-        this.playerName = ""
+        if(this.playerName){
+            let player = new User(this.playerName);
+            this.gameEngineService.addPlayer(player);
+            this.playerName = ""
+        }
     }
 
     constructor(public gameEngineService: GameEngineService){

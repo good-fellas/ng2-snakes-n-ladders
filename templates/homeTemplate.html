@@ -3,40 +3,74 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">Rules</div>
-                <div class="panel-body">
-                    <p>
-                        This is Place for rules:
-                    </p>
-                    <p>Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
-                    <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec ullamcorper nulla non metus auctor fringilla.</p>
-                    <p>Maecenas sed diam eget risus varius blandit sit amet non magna. Donec id elit non mi porta gravida at eget metus. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
+                <div class="panel-body rule-box">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Understand the object of the game.</strong>
+                            The object of the game is to be the first player to reach the end by moving across the board from square one to the final square.</li>
+                        <li class="list-group-item">
+                            <strong>Who goes first?</strong>
+                            System will decide who goes first.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Roll the die and move.</strong>
+                            Role the dice by clicking on the roll the dice button and system will move your position marker to the appropriate place according to the number shown on the dice.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Climb up ladders.</strong>
+                            The ladders on the game board allow you to move upwards and get ahead faster. If you land exactly on a square that shows an image of the bottom of a ladder, then system will move your position marker all the way up to the square at the top of the ladder.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>
+                                Slide down snakes or chutes.
+                            </strong>
+                            Game also have snakes on the board. Snakes move you back on the board because you have to slide down them.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>
+                                Take an extra turn if you roll a six.
+                            </strong>
+                            If you roll a six, then you get an extra turn. First, system will move your position marker forward six squares and then you are allowed to roll the die again. If you land on any snakes or ladders, follow the instructions above to move up or down and then roll again to take your extra turn. As long as you keep rolling sixes, you can keep moving.
+                        </li>
+                        <li class="list-group-item">
+                            <strong>
+                                Land exactly on the last square to win.
+                            </strong>
+                            The first person to reach the highest square on the board wins. But there's a twist! If you roll too high, your piece "bounces" off the last square and moves back. You can only win by rolling the exact number needed to land on the last square.
+                        </li>
+                    </ul>
+                    <a target="_blank" href="http://www.wikihow.com/Play-Snakes-and-Ladders">Rules attribution</a>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">Add Players</div>
-                    <div class="panel-body">
-                        <div class="col-lg-9">
+                    <div class="panel-body player-box">
+                        <div class="col-lg-8">
+                            <div class="info-box">
+                                &nbsp;
+                                <div class="alert alert-info">Please add atleast two player to play.</div>
+                            </div>
                             <form class="form">
                                 <div class="form-group">
                                     <label for="playerName">Player Name</label>
                                     <input type="text" [(ngModel)]="playerName" class="form-control" id="playerName" placeholder="Player Name">
                                 </div>
-
                                 <div class="form-group">
-                                    <button class="btn btn-default" (click)="addPlayer()" [disabled]="!(gameEngineService.players.length < 9)">Add Player</button>
-                                    <span *ngIf="!(gameEngineService.players.length < 9)" class="alert alert-danger">Max. player limit reached.</span>
+                                    <button class="btn btn-default" (click)="addPlayer()" [disabled]="!(gameEngineService.players.length < 5)">Add Player</button>
                                 </div>
                             </form>
                             <div>
                                 <a class="btn btn-success" [routerLink]="['/board']" [class.disabled]="!(gameEngineService.players.length > 1)">Play</a>
-                                <span *ngIf="!(gameEngineService.players.length > 1)" class="alert alert-info">Please add atleast two player to play.</span>
                             </div>
                         </div>
-                        <div class="col-lg-3">
-                            <ul>
-                                <li *ngFor="let player of gameEngineService.players">
+                        <div class="col-lg-4">
+                            <ul class="list-group">
+                                <li class="list-group-item text-center">
+                                   <strong>Player Names</strong>
+                                </li>
+                                <li class="list-group-item" *ngFor="let player of gameEngineService.players">
                                     {{player.username}}
                                 </li>
                             </ul>

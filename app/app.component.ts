@@ -6,6 +6,7 @@ import {SnakeAdvancerList} from "./components/snake-advancers-list";
 import {LadderAdvancerList} from "./components/ladder-advancer-list";
 import {GameEngineService} from "./services/gaming-engine";
 import {GamePanel} from "./components/game-panel";
+import {AboutComponent} from "./components/about.component";
 
 @Component({
     selector: 'my-app',
@@ -18,6 +19,7 @@ import {GamePanel} from "./components/game-panel";
 })
 @Routes([
     {path: '/home', component: HomeComponent},
+    {path: '/about', component: AboutComponent},
     {path: '/board', component: GamePanel},
     {path: '/', component: HomeComponent}
 ])

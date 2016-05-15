@@ -9,7 +9,7 @@ export class GameEngineService{
     currentPlayer = this.players[0];
 
     addPlayer(player:User){
-        this.players.push(player)
+        this.players.push(player);
         this.currentPlayer = player
     }
 

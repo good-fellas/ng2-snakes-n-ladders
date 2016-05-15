@@ -13,7 +13,7 @@ import {ROUTER_DIRECTIVES, Routes} from '@angular/router';
                 <ul class="nav navbar-nav">
                     <li><a>Snake & Ladder</a> </li>
                     <li [ngClass]="{'active': (menu == 'home')}" (click)="menu = 'home'"><a [routerLink]="['/home']">Home</a></li>
-                    <li [ngClass]="{'active': (menu == 'board')}" (click)="menu = 'board'"><a [routerLink]="['/board']">Board</a></li>
+                    <li [ngClass]="{'active': (menu == 'about')}" (click)="menu = 'about'"><a [routerLink]="['/about']">About</a></li>
                 </ul>
             </div>
         </div>
