@@ -5,16 +5,15 @@ import {Cell} from "../model/cell"
     selector: '[cell-row]',
     directives: [],
     template: `
-        <div class="col-lg-1 cell" *ngFor="let cell of cells; let ij = index" >
-            {{cell.position}}
+        <div class="col-lg-1 cell {{cell.position}}" *ngFor="let cell of cells; let ij = index" >
+            &nbsp; 
         </div>
     `,
     styles: [`
         .cell { 
             border: 1px solid black;
-            margin: 1px 1px;
-            height: 50px;
-            width: 60px;
+            height: 65px;
+            width: 65px;
          }
     `]
 })

@@ -42148,9 +42148,11 @@
 	};
 	var core_1 = __webpack_require__(7);
 	var advancer_1 = __webpack_require__(305);
+	var user_1 = __webpack_require__(306);
 	var GameEngineService = (function () {
 	    function GameEngineService() {
-	        this.players = new Array();
+	        this.players = [new user_1.User('Test User')];
+	        this.currentPlayer = this.players[0];
 	        this.advancersList = [
 	            new advancer_1.Advancer("snake", 18, 5),
 	            new advancer_1.Advancer("snake", 49, 33),
@@ -42253,7 +42255,7 @@
 	        core_1.Component({
 	            selector: 'nav-bar',
 	            directives: [router_1.ROUTER_DIRECTIVES],
-	            template: "\n        <nav class=\"navbar navbar-default\">\n    <div class=\"container-fluid\">\n        <!-- Brand and toggle get grouped for better mobile display -->\n        <div class=\"navbar-header\">\n            <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                <ul class=\"nav navbar-nav\">\n                    <li [ngClass]=\"{'active': (menu == 'home')}\" (click)=\"menu = 'home'\"><a [routerLink]=\"['/home']\">Home</a></li>\n                    <li [ngClass]=\"{'active': (menu == 'board')}\" (click)=\"menu = 'board'\"><a [routerLink]=\"['/board']\">Board</a></li>\n                </ul>\n            </div>\n        </div>\n    </div>\n</nav>\n    "
+	            template: "\n        <nav class=\"navbar navbar-default\">\n    <div class=\"container-fluid\">\n        <!-- Brand and toggle get grouped for better mobile display -->\n        <div class=\"navbar-header\">\n            <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n                <ul class=\"nav navbar-nav\">\n                    <li><a>Snake & Ladder</a> </li>\n                    <li [ngClass]=\"{'active': (menu == 'home')}\" (click)=\"menu = 'home'\"><a [routerLink]=\"['/home']\">Home</a></li>\n                    <li [ngClass]=\"{'active': (menu == 'board')}\" (click)=\"menu = 'board'\"><a [routerLink]=\"['/board']\">Board</a></li>\n                </ul>\n            </div>\n        </div>\n    </div>\n</nav>\n    "
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], NavBarComponent);
@@ -42352,7 +42354,7 @@
 	        core_1.Component({
 	            selector: 'game-panel',
 	            directives: [board_component_1.BoardComponent, user_interaction_panel_1.UserInteractionPanel, ladder_advancer_list_1.LadderAdvancerList, snake_advancers_list_1.SnakeAdvancerList],
-	            template: "\n <div class=\"container\">\n        <div class=\"row\"> \n            <div class=\"col-md-12 text-center\"> <h1>Snake & Ladder</h1> </div>\n        </div>\n        \n        <div class=\"row\">\n            <div class=\"col-md-1\">\n                <snake-advancers-list></snake-advancers-list>\n            </div>\n            <div class=\"col-md-1\">\n                <ladder-advancers-list></ladder-advancers-list>\n            </div>\n            \n            <div class=\"col-md-7\">\n                <board></board>\n            </div>\n            <div class=\"col-md-3\">\n                <user-interaction-panel></user-interaction-panel>\n            </div>\n        </div>\n </div>\n    "
+	            template: "\n <div class=\"container\">\n        \n        \n        <div class=\"row\">\n            <div class=\"col-md-1\">\n                <snake-advancers-list></snake-advancers-list>\n            </div>\n            <div class=\"col-md-1\">\n                <ladder-advancers-list></ladder-advancers-list>\n            </div>\n            \n            <div class=\"col-md-7\">\n                <board></board>\n            </div>\n            <div class=\"col-md-3\">\n                <user-interaction-panel></user-interaction-panel>\n            </div>\n        </div>\n </div>\n    "
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], GamePanel);
@@ -42415,23 +42417,20 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(7);
-	var cell_1 = __webpack_require__(313);
-	var cell_component_1 = __webpack_require__(314);
+	var cell_component_1 = __webpack_require__(313);
 	var BoardComponent = (function () {
 	    function BoardComponent() {
 	        this.cells = new Array();
 	        for (var i = 0; i < 10; i++) {
-	            this.cells[i] = new Array();
-	            for (var j = 0; j < 10; j++) {
-	                this.cells.push(new cell_1.Cell(100 - (i * j)));
-	            }
+	            this.cells[i] = i;
 	        }
 	    }
 	    BoardComponent = __decorate([
 	        core_1.Component({
 	            selector: 'board',
 	            directives: [cell_component_1.CellComponent],
-	            template: "\n     <div>\n        <div cell-row class=\"row\" *ngFor=\"let rowCell of cells\" row-cell=\"rowCell\"></div>       \n     </div>\n    "
+	            template: "\n     <div class=\"game-board\">\n        <div cell-row class=\"row\" *ngFor=\"let rowCell of cells; let i = index\" curent-row-count=\"{{i}}\"></div>       \n     </div>\n    ",
+	            styles: ["\n        .game-board {\n            background-image: url('../../assets/images/snl.jpg')\n        }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], BoardComponent);
@@ -42442,20 +42441,6 @@
 
 /***/ },
 /* 313 */
-/***/ function(module, exports) {
-
-	"use strict";
-	var Cell = (function () {
-	    function Cell(position) {
-	        this.position = position;
-	    }
-	    return Cell;
-	}());
-	exports.Cell = Cell;
-	//# sourceMappingURL=cell.js.map
-
-/***/ },
-/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -42469,32 +42454,27 @@
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(7);
-	var cell_1 = __webpack_require__(313);
+	var cell_1 = __webpack_require__(314);
 	var CellComponent = (function () {
 	    function CellComponent() {
 	        this.cells = new Array();
-	        console.log(this.curentRowCount);
-	        for (var index = 0; index < 10; index++) {
-	            this.cells.push(new cell_1.Cell(100 - (index * this.curentRowCount)));
-	        }
 	    }
-	    __decorate([
-	        core_1.Input('bank-name'), 
-	        __metadata('design:type', String)
-	    ], CellComponent.prototype, "bankName", void 0);
+	    CellComponent.prototype.ngAfterViewInit = function () {
+	        for (var index = 0; index < 10; index++) {
+	            var cellIndex = (this.curentRowCount % 2 == 0) ? index : (9 - index);
+	            this.cells[cellIndex] = (new cell_1.Cell(100 - (index + (this.curentRowCount * 10))));
+	        }
+	    };
 	    __decorate([
 	        core_1.Input('curent-row-count'), 
 	        __metadata('design:type', Number)
 	    ], CellComponent.prototype, "curentRowCount", void 0);
-	    __decorate([
-	        core_1.Input('row-cell'), 
-	        __metadata('design:type', Object)
-	    ], CellComponent.prototype, "id", void 0);
 	    CellComponent = __decorate([
 	        core_1.Component({
 	            selector: '[cell-row]',
 	            directives: [],
-	            template: "\n        ::{{curentRowCount}}::\n        <div class=\"col-lg-1\" *ngFor=\"let cell of cells; let ij = index\" >\n            {{cell.position}}\n        </div>\n    "
+	            template: "\n        <div class=\"col-lg-1 cell\" *ngFor=\"let cell of cells; let ij = index\" >\n            {{cell.position}}\n        </div>\n    ",
+	            styles: ["\n        .cell { \n            border: 1px solid black;\n            margin: 1px 1px;\n            height: 50px;\n            width: 60px;\n         }\n    "]
 	        }), 
 	        __metadata('design:paramtypes', [])
 	    ], CellComponent);
@@ -42502,6 +42482,20 @@
 	}());
 	exports.CellComponent = CellComponent;
 	//# sourceMappingURL=cell.component.js.map
+
+/***/ },
+/* 314 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Cell = (function () {
+	    function Cell(position) {
+	        this.position = position;
+	    }
+	    return Cell;
+	}());
+	exports.Cell = Cell;
+	//# sourceMappingURL=cell.js.map
 
 /***/ }
 /******/ ]);
