@@ -6,15 +6,15 @@ import {GameEngineService} from "../services/gaming-engine";
     selector: '[cell-row]',
     directives: [],
     template: `
-        <div class="col-lg-1 cell {{cell.position}}" *ngFor="let cell of cells; let ij = index" >
+        <div class="cell {{cell.position}}" *ngFor="let cell of cells; let ij = index" >
             &nbsp; 
         </div>
     `,
     styles: [`
         .cell { 
-            border: 1px solid black;
-            height: 65px;
-            width: 65px;
+            height: 70px;
+            width: 70px;
+            float: right;
          }
     `]
 })
