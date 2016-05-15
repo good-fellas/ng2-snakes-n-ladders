@@ -41,10 +41,9 @@ export class UserInteractionPanel{
     {
         this.hideRollingDice = false;
         setTimeout(() => {
-                this.getRandomNumber();
-                this.hideRollingDice = true;
-        },
-        2000)
+            this.getRandomNumber();
+            this.hideRollingDice = true;
+        }, 2000)
     }
 
     getRandomNumber(){
