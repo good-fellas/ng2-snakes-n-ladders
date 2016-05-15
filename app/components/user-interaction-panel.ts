@@ -24,21 +24,59 @@ import set = Reflect.set;
                 </div>
             </div>
         </div>
+        
+        
         <div class="panel panel-default">
             <div class="panel-heading">
-                <strong>Logs</strong>
+                <strong>Recent Activities</strong>
             </div>
             <div class="panel-body">
-                <div class="row log" *ngFor="let info of gameEngineService.messages">
-                    <i class="fa {{info.userIcon}}"></i> {{info.text}}
-                </div>
+                <table class="table table-hover">
+                    <tbody>
+                        <tr *ngFor="let info of gameEngineService.messages">
+                            <td><i class="fa {{info.userIcon}}"></i> {{info.text}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
         </div>
     `,
     styles: [`
         .log {
             border-bottom: 1px dashed #ccc;
+        }
+                table {
+            width: 100%;
+        }
+
+        thead, tbody, tr, td, th { display: block; }
+
+        tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+
+        thead th {
+            height: 30px;
+
+            /*text-align: left;*/
+        }
+
+        tbody {
+            height: 328px;
+            overflow-y: auto;
+        }
+
+        thead {
+            /* fallback */
+        }
+
+
+        tbody td, thead th {
+            width: 100%;
+            float: left;
         }
     `]
 })
