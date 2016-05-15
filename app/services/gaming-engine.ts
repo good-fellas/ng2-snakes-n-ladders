@@ -10,6 +10,8 @@ export class GameEngineService{
     currentPlayer:User = this.players[this.currentPlayerIndex];
     messages = new Array();
     cells = new Array();
+    isGameInProgress = false;
+    currentMenu = "home";
     userIcons = ["fa-car", "fa-rocket", "fa-ship", "fa-fighter-jet", "fa-truck", "fa-heart", "fa-tree", "fa-send", "fa-futbol-o", "fa-headphones"];
 
     advancersList = [

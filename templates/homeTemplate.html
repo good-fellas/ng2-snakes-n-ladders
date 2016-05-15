@@ -19,6 +19,7 @@
                                         <div class="form-group">
                                             <button class="btn btn-default" (click)="addPlayer()" [disabled]="!(gameEngineService.players.length < 5)">Add Player</button>
                                             <a class="btn btn-success" [routerLink]="['/board']"
+                                               (click) = "gameEngineService.isGameInProgress = true; gameEngineService.currentMenu='board'"
                                                *ngIf="gameEngineService.players.length > 1"> Play </a>
                                         </div>
                                     </form>
