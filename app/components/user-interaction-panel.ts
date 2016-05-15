@@ -113,11 +113,7 @@ export class UserInteractionPanel{
     }
 
     setRandomNumber(){
-        this.randomNumber = this.getRandomInt(1,7);
-    }
-
-    getRandomInt(min:number, max:number):number {
-        return Math.floor(Math.random() * (max - min)) + min;
+        this.randomNumber = this.gameEngineService.getRandomInt(1,7);
     }
 
     setDiceResultImagePath(diceResult:number){
