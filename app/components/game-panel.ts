@@ -11,10 +11,10 @@ import {BoardComponent} from "./board.component";
  <div class="container"  style="padding-top:110px">
     <div class="intro-text">
         <div class="row"> 
-            <div class="col-md-9" style="width: 650px; height: 650px;">
+            <div class="col-md-8" style="width: 650px; height: 650px;">
                 <board></board>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <user-interaction-panel></user-interaction-panel>
             </div>
         </div>
