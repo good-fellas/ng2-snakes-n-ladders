@@ -7,28 +7,20 @@ import set = Reflect.set;
     template: `
         <div class="row">
             <div class="col-lg-12">
-                <h4>Manish kapoor</h4>        
+                <h4>{{gameEngineService.currentPlayer.username}}</h4>        
             </div>
-            <div class="col-lg-12">
-                #{{hideRollingDice}}#
+            <div class="col-lg-12" style="height:70px">
                 <img [hidden]="hideRollingDice"
                 src="../../assets/images/rolling-dice.gif" />        
                 
-                <img [hidden]="hideDiceResult" height="50px"
+                <img [hidden]="hideDiceResult" height="50px" style="padding-left:5px;padding-top:5px"
                 src="{{diceResultImagePath}}" />
                 
             </div>
             <div class="col-lg-12">
-                <button (click)="rollButtonClickHandler()">Roll</button>        
+                <button class="btn btn-success" (click)="rollButtonClickHandler()">Roll</button>        
                 <!--<button (click)="getRandomNumber()">Roll</button>        -->
             </div>
-            <div class="col-lg-12">
-                {{randomNumber}}        
-            </div>
-            <div class="col-lg-12">
-                Current Player : {{gameEngineService.currentPlayer.username}}        
-            </div>
-            
         </div>
     `
 })
