@@ -112,7 +112,7 @@ export class GameEngineService{
             nextCellIndex = advancer.finalCellIndex;
             advMsg = this.advancerMsg[advancer.type];
         }
-        this.addMessageLog(this.currentPlayer, advMsg + this.currentPlayer.username + ' moved to '+ nextCellIndex + '.');
+        this.addMessageLog(this.currentPlayer, advMsg  + ' Moved you to '+ nextCellIndex + '.');
         return nextCellIndex;
     }
 
@@ -120,7 +120,7 @@ export class GameEngineService{
         let nextPlayer:User;
         if (rolledValue === 6) {
             nextPlayer = this.currentPlayer;
-            this.addMessageLog(this.currentPlayer, "Congratulation "+this.currentPlayer.username+"! You got another turn...");
+            this.addMessageLog(this.currentPlayer, "Congratulation! You got another turn...");
         } else {
             this.currentPlayerIndex = (this.players.length - 1 === this.currentPlayerIndex) ? 0 : (this.currentPlayerIndex +1);
             nextPlayer = this.players[this.currentPlayerIndex];
@@ -132,6 +132,7 @@ export class GameEngineService{
         console.log(this.messages);
         this.messages.unshift({
             'userIcon': user.displayImage,
+            'username': user.username,
             'text': message
         });
     }
