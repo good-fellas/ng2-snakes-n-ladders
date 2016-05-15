@@ -9,17 +9,18 @@ import {GameEngineService} from "../services/gaming-engine";
                 <h4>Manish kapoor</h4>        
             </div>
             <div class="col-lg-12">
-                <img src="../../assets/images/rolling-dice.png" />        
+                #{{hideRollingDice}}#
+                <img [hidden]="hideRollingDice"
+                src="../../assets/images/rolling-dice.gif" />        
             </div>
             <div class="col-lg-12">
-                <button (click)="getRandomNumber()">Roll</button>        
+                <button (click)="rollButtonClickHandler()">Roll</button>        
+                <!--<button (click)="getRandomNumber()">Roll</button>        -->
             </div>
             <div class="col-lg-12">
                 {{randomNumber}}        
             </div>
-            
             <div class="col-lg-12">
-                
                 Current Player : {{gameEngineService.currentPlayer.username}}        
             </div>
             
@@ -29,9 +30,21 @@ import {GameEngineService} from "../services/gaming-engine";
 
 export class UserInteractionPanel{
     randomNumber:number;
+    hideRollingDice:boolean;
 
     constructor(public gameEngineService:GameEngineService){
         this.randomNumber = 0;
+        this.hideRollingDice = true;
+    }
+
+    rollButtonClickHandler()
+    {
+        this.hideRollingDice = false;
+        setTimeout(() => {
+                this.getRandomNumber();
+                this.hideRollingDice = true;
+        },
+        2000)
     }
 
     getRandomNumber(){
