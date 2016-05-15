@@ -9,10 +9,8 @@
                         <div class="panel-heading">Add Players</div>
                             <div class="panel-body player-box">
                                 <div class="col-lg-8">
-                                    <div class="info-box">
-                                        &nbsp;
-                                        <div class="alert alert-info">Please add at least two players to play.</div>
-                                    </div>
+                                    <div class="alert alert-info" role="alert" *ngIf="gameEngineService.players.length < 5"> Minimum 2 players are required to play.</div>
+                                    <div class="alert alert-danger" role="alert" *ngIf="gameEngineService.players.length == 5">Maximum player limit reached.</div>
                                     <form class="form">
                                         <div class="form-group">
                                             <label for="playerName">Player Name</label>
@@ -20,7 +18,8 @@
                                         </div>
                                         <div class="form-group">
                                             <button class="btn btn-default" (click)="addPlayer()" [disabled]="!(gameEngineService.players.length < 5)">Add Player</button>
-                                            <a class="btn btn-success" [routerLink]="['/board']" [class.disabled]="!(gameEngineService.players.length > 1)">Play</a>
+                                            <a class="btn btn-success" [routerLink]="['/board']"
+                                               *ngIf="gameEngineService.players.length > 1"> Play </a>
                                         </div>
                                     </form>
                                     <!--<div>-->
