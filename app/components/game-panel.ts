@@ -18,9 +18,8 @@ import { Modal,BS_MODAL_PROVIDERS} from 'angular2-modal/plugins/bootstrap';
                 <board></board>
             </div>
             <div class="col-md-4">
-                <user-interaction-panel></user-interaction-panel>
+                <user-interaction-panel (game-finished)="openWinnerDialog()"></user-interaction-panel>
             </div>
-            <button (click)="openAlert()">open Alert</button>
         </div>
     </div>
  </div>
@@ -30,7 +29,7 @@ export class GamePanel{
     constructor(public modal: Modal, viewContainer: ViewContainerRef) {
         modal.defaultViewContainer = viewContainer;
     }
-    openAlert() {
+    openWinnerDialog() {
         return this.modal.open(WinnerModal);
     }
 
