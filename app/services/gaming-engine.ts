@@ -35,7 +35,8 @@ export class GameEngineService{
     addPlayer(player:User) {
         player.displayImage = this.userIcons[this.players.length];
         this.players.push(player);
-        this.currentPlayer = player
+        this.currentPlayer = player;
+        this.currentPlayerIndex = this.players.length - 1;
     }
 
     getSnakeAdvancers() {
@@ -55,7 +56,6 @@ export class GameEngineService{
     }
 
     completeUserTurn(rolledValue:number) {
-        console.log("Current player in begining: ",this.currentPlayer);
         this.message=null;
         let nextCellIndex  = this.getNextCellIndex(rolledValue);
         let cell = this.cells[this.currentPlayer.currentCellIndex];
@@ -65,13 +65,11 @@ export class GameEngineService{
                 cell.userIcons.splice(index, 1);
             }
         }
-        console.log(nextCellIndex);
+        console.log(cell);
         this.currentPlayer.currentCellIndex = nextCellIndex;
         let nextCell = this.cells[nextCellIndex];
-        console.log(nextCell, this.cells);
-        this.currentPlayer = this.getNextPlayer(rolledValue);
         nextCell.userIcons.push(this.currentPlayer.displayImage);
-        console.log("Current player in end: ",this.currentPlayer);
+        this.currentPlayer = this.getNextPlayer(rolledValue);
     }
 
     getNextCellIndex(rolledValue: number) {
@@ -83,7 +81,6 @@ export class GameEngineService{
     }
 
     getNextPlayer(rolledValue: number):User {
-        console.log("Current player index in begining: ",this.currentPlayerIndex);
         let nextPlayer:User;
         if (rolledValue === 6) {
             nextPlayer = this.currentPlayer;
@@ -93,7 +90,6 @@ export class GameEngineService{
             console.log("Current player index in end: ",this.currentPlayerIndex, this.players);
             nextPlayer = this.players[this.currentPlayerIndex];
         }
-        console.log("Current player index in end: ",this.currentPlayerIndex);
         return nextPlayer;
     }
 

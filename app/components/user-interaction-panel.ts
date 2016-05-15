@@ -7,7 +7,7 @@ import set = Reflect.set;
     template: `
         <div class="row">
             <div class="col-lg-12">
-                <h4>{{gameEngineService.currentPlayer.username}}'s turn</h4>        
+                <h4><i class="fa {{gameEngineService.currentPlayer.displayImage}}"></i>&nbsp; {{gameEngineService.currentPlayer.username}}'s turn</h4>        
             </div>
             <div class="col-lg-12" style="height:70px">
                 <img [hidden]="hideRollingDice"
