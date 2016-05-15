@@ -77,7 +77,11 @@ export class GameEngineService{
     }
 
     getNextCellIndex(rolledValue: number) {
-        let nextCellIndex  =this.currentPlayer.currentCellIndex + rolledValue;
+        let nextCellIndex  = this.currentPlayer.currentCellIndex + rolledValue;
+        if(nextCellIndex > 100) {
+            this.message = "Cannot move " +rolledValue+ " step(s). Max. allowed step: " + (100 - this.currentPlayer.currentCellIndex);
+            nextCellIndex  =this.currentPlayer.currentCellIndex;
+        }
         let advancer = this.advancersList.find(function (element) {
            return  element.initialCellIndex === nextCellIndex;
         });
