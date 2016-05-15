@@ -31,6 +31,9 @@ import {GameEngineService} from "../services/gaming-engine";
                             <li [ngClass]="{'active': (getManu() == 'about')}" (click)="setMenu('about')">
                                 <a class="page-scroll" [routerLink]="['/about']">Team</a>
                             </li>
+                            <li [ngClass]="{'active': (getManu() == 'credit')}" (click)="setMenu('credit')">
+                                <a class="page-scroll" [routerLink]="['/credit']">Credits</a>
+                            </li>
                         </ul>
                     </div>
                     <!-- /.navbar-collapse -->
