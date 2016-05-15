@@ -9,7 +9,7 @@
                         <div class="panel-heading">Add Players</div>
                             <div class="panel-body player-box">
                                 <div class="col-lg-8">
-                                    <div class="alert alert-info" role="alert" *ngIf="gameEngineService.players.length < 5"> Minimum 2 players are required to play.</div>
+                                    <div class="alert alert-info" role="alert" *ngIf="gameEngineService.players.length < 5"> {{nameExist? 'Name already exist. ' : ''}}Minimum 2 players are required to play.</div>
                                     <div class="alert alert-danger" role="alert" *ngIf="gameEngineService.players.length == 5">Maximum player limit reached.</div>
                                     <form class="form">
                                         <div class="form-group">
