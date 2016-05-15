@@ -11,7 +11,7 @@ import {BoardComponent} from "./board.component";
  <div class="container"  style="padding-top:110px">
     <div class="intro-text">
         <div class="row"> 
-            <div class="col-md-9" style="width: 736px; height: 736px;">
+            <div class="col-md-9" style="width: 650px; height: 650px;">
                 <board></board>
             </div>
             <div class="col-md-3">
