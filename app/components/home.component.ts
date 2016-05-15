@@ -27,9 +27,11 @@ export class HomeComponent {
     playerName:string;
     
     addPlayer():void{
-        let player = new User(this.playerName);
-        this.gameEngineService.addPlayer(player);
-        this.playerName = ""
+        if(this.playerName){
+            let player = new User(this.playerName);
+            this.gameEngineService.addPlayer(player);
+            this.playerName = ""
+        }
     }
 
     constructor(public gameEngineService: GameEngineService){

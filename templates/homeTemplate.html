@@ -50,8 +50,7 @@
                         <div class="col-lg-8">
                             <div class="info-box">
                                 &nbsp;
-                                <div *ngIf="!(gameEngineService.players.length > 1)" class="alert alert-info">Please add atleast two player to play.</div>
-                                <div *ngIf="!(gameEngineService.players.length < 9)" class="alert alert-danger">Max. player limit reached.</div>
+                                <div class="alert alert-info">Please add atleast two player to play.</div>
                             </div>
                             <form class="form">
                                 <div class="form-group">
@@ -59,7 +58,7 @@
                                     <input type="text" [(ngModel)]="playerName" class="form-control" id="playerName" placeholder="Player Name">
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn btn-default" (click)="addPlayer()" [disabled]="!(gameEngineService.players.length < 9)">Add Player</button>
+                                    <button class="btn btn-default" (click)="addPlayer()" [disabled]="!(gameEngineService.players.length < 5)">Add Player</button>
                                 </div>
                             </form>
                             <div>
@@ -67,8 +66,11 @@
                             </div>
                         </div>
                         <div class="col-lg-4">
-                            <ul>
-                                <li *ngFor="let player of gameEngineService.players">
+                            <ul class="list-group">
+                                <li class="list-group-item text-center">
+                                   <strong>Player Names</strong>
+                                </li>
+                                <li class="list-group-item" *ngFor="let player of gameEngineService.players">
                                     {{player.username}}
                                 </li>
                             </ul>
